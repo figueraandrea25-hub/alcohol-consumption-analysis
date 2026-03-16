@@ -7,13 +7,13 @@ El análisis global del consumo de alcohol suele caer en el reduccionismo estad�
 
 ## Objetivos 
 ## Objetivo General
-Cuestionar la validez de las comparaciones tradicionales del consumo de alcohol a nivel mundial mediante el procesamiento computacional de los intervalos de confianza de la OMS, evidenciando el solapamiento de datos y la incertidumbre que el promedio suele invisibilizar.
+Cuestionar la validez de las comparaciones tradicionales del consumo de alcohol a nivel mundial mediante el procesamiento computacional de los intervalos de confianza del dataset, evidenciando el solapamiento de datos y la incertidumbre que el promedio suele invisibilizar.
 
 ## Objetivos Específicos 
 
 **1. Extraer y depurar** los registros de consumo y sus intervalos de confianza, gestionando valores faltantes y contrastando la media frente a la mediana para identificar sesgos por valores atípicos.
 
-**2. Analizar la variabilidad del error (heterocedasticidad)** y la consistencia de los márgenes de error para validar la precisión de las estimaciones oficiales de la OMS a nivel global.
+**2. Analizar la variabilidad del error (heterocedasticidad)** y la consistencia de los márgenes de error para validar la precisión de las estimaciones del dataset a nivel global.
 
 **3. Identificar y visualizar** los niveles de solapamiento de los intervalos de confianza para determinar regiones donde las diferencias de promedios carecen de verdad estadística.
 
