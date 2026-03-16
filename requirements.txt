@@ -1,6 +1,6 @@
-streamlit
-pandas
-plotly.express 
+streamlit # type: ignore
+pandas # type: ignore
+plotly.express  # type: ignore
 
 
 
