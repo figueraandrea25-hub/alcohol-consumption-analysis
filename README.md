@@ -9,5 +9,7 @@ Objetivos Específicos
 4.Identificar y visualizar los niveles de solapamiento de los intervalos de confianza para determinar regiones donde las diferencias de promedios carecen de verdad estadística.
 
 Integrantes: 
+
 Andrea Figuera
+
 Eduardo Espinoza
