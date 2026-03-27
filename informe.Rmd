@@ -93,9 +93,9 @@ Esto responde a que la variabilidad del consumo no es constante ni uniforme entr
 Argumento final. Debido a esto, se plantea las siguientes preguntas de investigación:\
 
 
-\textbf{1.}	Cómo influyen los valores atípicos y los datos faltantes en la representatividad del promedio del consumo de alcohol?\
+\textbf{1.}	¿Cómo influyen los valores atípicos y los datos faltantes en la representatividad del promedio del consumo de alcohol?\
 
-\textbf{2.}	Pregunta2\
+\textbf{2.}	¿Qué tan confiables son los promedios globales si consideramos que los márgenes de error varían drásticamente entre regiones, y cómo afecta esta diferencia la precisión de lo que se reporta?\
 
 \textbf{3.}	¿En qué medida el solapamiento de los intervalos de confianza invalida las comparaciones y jerarquías de consumo tradicionales?\
 
@@ -131,9 +131,9 @@ Este proyecto contribuye al repositorio **"Análisis de consumo de alcohol e inc
 
 \subsection{Objetivos Específicos}
 \begin{itemize}
-  \item{**Extraer y depurar** los registros de consumo de alcohol y sus intervalos de confianza, gestionando los valores faltantes y contrastando la media frente a la mediana para identificar el sesgo generado por valores atípicos (outliers) en el promedio.}
-  \item{**Evaluar la variabilidad** en la precisión de las estimaciones analizando el ancho de los márgenes de error para cuestionar la consistencia de los reportes globales}
-  \item{**Identificar y visualizar los niveles de solapamiento de los intervalos de confianza**, con el fin de determinar regiones donde las diferencias en los promedios carecen de verdad estadística, culminando en la generación de un reporte técnico reproducible que evidencie la incertidumbre de los datos.}
+  \item{Extraer y depurar los registros de consumo de alcohol y sus intervalos de confianza, gestionando los valores faltantes y contrastando la media frente a la mediana para identificar el sesgo generado por valores atípicos (outliers) en el promedio.}
+  \item{Evaluar la variabilidad en la precisión de las estimaciones analizando el ancho de los márgenes de error para cuestionar la consistencia de los reportes globales}
+  \item{Identificar y visualizar los niveles de solapamiento de los intervalos de confianza, con el fin de determinar regiones donde las diferencias en los promedios carecen de verdad estadística, culminando en la generación de un reporte técnico reproducible que evidencie la incertidumbre de los datos.}
 \end{itemize}
 
 
@@ -141,37 +141,56 @@ Este proyecto contribuye al repositorio **"Análisis de consumo de alcohol e inc
 
 \subsection{Horizontal}
 
-Describir la cobertura Horizontal del trabajo de investigación\
+La cobertura horizontal del presente estudio abarca las características intrínsecas del consumo de alcohol registradas en la base de datos alcohol_data.csv. Se consideran las **dimensiones descriptivas** del registro (país (country), código iso3, y año (year)).**Adicionalmente, se incorporará una variable derivada para agrupar los países en regiones geográficas, facilitando un análisis comparativo a mayor escala**. Se incluyen las **métricas de tendencia central**, específicamente el consumo de alcohol per cápita en litros (alcohol_liters_per_capita).Finalmente, se integran las **variables de incertidumbre técnica**, analizando el límite inferior (lower_ci), el límite superior (upper_ci) y el ancho del intervalo de confianza (ci_width) para cuestionar la precisión de los reportes globales.\
 
 \begin{table}[ht]
 \centering
-\caption{Variables consideradas} 
-\resizebox{10cm}{!} {
+\caption{Variables consideradas en el análisis de consumo e incertidumbre}
+\label{tab:variables}
+% Ajustamos el ancho a 12cm para que quepa bien el texto
+\resizebox{15cm}{!} {
+% Definimos 3 columnas centradas (c c c)
 \begin{tabular}{ccc}
   \hline
-\ \ \ \ \ NOMBRE DE LA VARIABLE \\ 
+  \textbf{NOMBRE DE LA VARIABLE} & \textbf{TIPO DE VARIABLE} & \textbf{DESCRIPCIÓN} \\
   \hline
-   VARIABLE 1 \\ 
-VARIABLE 2\\ 
-VARIABLE n\\ 
-   \hline
+  país (`country`) & Categórica (Dimensión) & Nombre del país reportado. \\
+  año (`year`) & Numérica Entera (Tiempo) & Año del reporte (2000-2019). \\
+  consumo (`alcohol\_liters\_per\_capita`) & Numérica Continua (Métrica) & Consumo per cápita en litros. \\
+  ancho del intervalo (`ci\_width`) & Numérica Continua (Incertidumbre) & Medida de la precisión del reporte. \\
+  región (derivada) & Categórica (Agrupación) & Región geográfica (creada para análisis). \\
+  \hline
 \end{tabular}
 }
 \end{table}
 
 \subsection{Vertical}
 
-Describir la cobertura Vertical del trabajo de investigación
+La cobertura vertical del trabajo de investigación comprende un total de 4324 observaciones (registros). Cada fila representa un dato anual de consumo por país. Para efectos de esta investigación, se realizó una delimitación poblacional filtrando únicamente los registros correspondientes a **"Ambos sexos"** (Both sexes). El alcance temporal de los datos es longitudinal, abarcando desde el año **2000 hasta el año 2019**. Esta delimitación permite un análisis comparativo y **evolutivo** para observar las variaciones en los reportes de salud pública a lo largo de estas dos décadas.\
 
 
 \section{Periodo de Referencia}
 
-Describir la fuente y el Periodo de Referencia utilizado en el trabajo de investigación
+Para la presente investigación, el periodo de referencia efectivo para el análisis descriptivo y de incertidumbre técnica se estableció en el intervalo **2000-2019**. Este rango de dos décadas fue seleccionado estratégicamente debido a que presenta la mayor **consistencia y precisión** en los reportes de salud global sobre consumo de alcohol per cápita. A partir del año 2000, los métodos de recopilación de datos y los modelos de estimación de intervalos de confianza fueron estandarizados, lo que reduce los márgenes de error (`ci_width`) y permite una comparación longitudinal más robusta entre países y regiones.El procesamiento de la información se realizó con corte a Abril de 2026\
 
 \section{Variables}
 
-Describir la variable en estudio en el trabajo de investigación
+**La variable principal en estudio (Variable Dependiente/Objetivo) es el consumo (`alcohol\_liters\_per\_capita`)**, que representa el promedio de litros de alcohol puro consumidos por persona al año en la población de Ambos sexos (`Both sexes`). Esta métrica de tendencia central es fundamental para evaluar las tendencias globales de salud pública.
 
+**Como variables explicativas o independientes se analizan:**
+
+1.  **Variables Temporales y Geográficas (Nativas):**
+    * **Año (`year`)**: Año del reporte (2000-2019).
+    * **País (`country`)**: Nombre del país reportado.
+    * **Código ISO3 (`iso3`)**: Código estandarizado de tres letras del país.
+
+2.  **Variable Geográfica Derivada (Clave para Análisis Regional):**
+    * **Región (derivada)**: Agrupación geográfica de países (creada para este análisis, ej: "Américas", "Europa", "África"). Esta variable permite un análisis comparativo y de consistencia a una escala mayor, facilitando la identificación de patrones regionales de incertidumbre técnica.
+
+3.  **Variables de Incertidumbre Técnica (Corazón de la Tesis):**
+    * **Intervalo de Confianza (Lower CI / Upper CI)**: Límites inferior (`lower\_ci`) y superior (`upper\_ci`) que delimitan el rango de la estimación.
+    * **Ancho del Intervalo (`ci\_width`)**: Medida de la precisión técnica, calculada como la diferencia entre los límites superior e inferior. Un ancho mayor indica una menor consistencia en el reporte global./
+    
 \chapter{Marco Teórico}
 
 
