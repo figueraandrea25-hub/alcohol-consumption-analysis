@@ -1,36 +1,29 @@
 ---
-# --- Metadatos Básicos ---
 title: "El Consumo de alcohol per capital y los datos que no se miden"
 author:
-   - Andrea Figuera 
-   - Eduardo Espinoza
+- Andrea Figuera
+- Eduardo Espinoza
 date: "Abril 2026"
-
-# --- Metadatos Específicos de Plantilla ---
-degree: "Computación I"
-director: 
-  - Jesus Ochoa 
-  - Oliver Triveño
-lugar: "Caracas"
-facultad: 
-  - Facultad de Ciencias Económicas y Sociales
-  - Escuela de Estadistica y Ciencias Actuariales
-# Ruta al escudo (relativa al archivo .Rmd)
-escudo: "Latex/Classes/Escudos/faces"
-
-# --- Bibliografía ---
-bibliography: bibliografia.bib
-
-# --- Configuración de Salida ---
-output: 
+output:
+  html_document:
+    toc: yes
+    df_print: paged
   pdf_document:
-    template: template.tex  # Llamamos al archivo de plantilla
-    keep_tex: true                 # Útil para ver errores si ocurren
-    toc: true                      # Generar índice
-    number_sections: true
-    citation_package: natbib       # Importante: forzar natbib porque tu plantilla lo usa
-
-# --- Resumen (Abstract) ---
+    template: template.tex
+    keep_tex: yes
+    toc: yes
+    number_sections: yes
+    citation_package: natbib
+director:
+- Jesus Ochoa
+- Oliver Triveño
+lugar: Caracas
+facultad:
+- Facultad de Ciencias Económicas y Sociales
+- Escuela de Estadistica y Ciencias Actuariales
+escudo: Latex/Classes/Escudos/faces
+bibliography: bibliografia.bib
+degree: Computación I
 abstract: |
   Resumen del trabajo de investigación...
 ---
@@ -179,37 +172,78 @@ Para la presente investigación, el periodo de referencia efectivo para el anál
 
 **Como variables explicativas o independientes se analizan:**
 
-1.  **Variables Temporales y Geográficas (Nativas):**
+1.  **Variables Temporales y Geográficas:**
     * **Año (`year`)**: Año del reporte (2000-2019).
     * **País (`country`)**: Nombre del país reportado.
     * **Código ISO3 (`iso3`)**: Código estandarizado de tres letras del país.
 
-2.  **Variable Geográfica Derivada (Clave para Análisis Regional):**
+2.  **Variable Geográfica Derivada:**
     * **Región (derivada)**: Agrupación geográfica de países (creada para este análisis, ej: "Américas", "Europa", "África"). Esta variable permite un análisis comparativo y de consistencia a una escala mayor, facilitando la identificación de patrones regionales de incertidumbre técnica.
 
-3.  **Variables de Incertidumbre Técnica (Corazón de la Tesis):**
+3.  **Variables de Incertidumbre Técnica:**
     * **Intervalo de Confianza (Lower CI / Upper CI)**: Límites inferior (`lower\_ci`) y superior (`upper\_ci`) que delimitan el rango de la estimación.
     * **Ancho del Intervalo (`ci\_width`)**: Medida de la precisión técnica, calculada como la diferencia entre los límites superior e inferior. Un ancho mayor indica una menor consistencia en el reporte global./
     
 \chapter{Marco Teórico}
 
-
 \section{Bases Teóricas}
 
-Resumen de las bases teoricas explicadas en el capitulo y su importancia\
+El presente capítulo establece los fundamentos estadísticos y actuariales necesarios para el análisis del consumo de alcohol a nivel global y la cuantificación de su incertidumbre. Todo el marco conceptual se ajusta estrictamente a las variables observadas en la base de datos objeto de este estudio.
 
-\subsection{Definición 1}
+\subsection{Consumo de Alcohol Total Per Cápita (APC)}
 
-Descripción de la definición 1\
+El indicador principal de este estudio es el Consumo de Alcohol Total Per Cápita (APC), representado en el conjunto de datos por la variable \texttt{alcohol\_liters\_per\_capita}. Técnicamente, se define como la cantidad total (en litros) de alcohol puro consumido por la población en un país durante un año específico.
 
-\subsection{Definición 2}
+Desde la perspectiva estadístico-actuarial, el valor reportado como APC es un \textbf{estimador puntual} de la media poblacional ($\mu$). Dado que es imposible conocer el consumo exacto y absoluto de cada individuo en una nación (debido a la existencia de consumo no registrado, como la producción artesanal o el mercado ilícito), este valor se construye a partir de modelos de estimación que combinan fuentes determinísticas y estocásticas.
 
-Descripción de la definición 2\
+\subsection{Incertidumbre y Componente Estocástico}
 
-\subsection{Definición n}
+Debido a que el APC incluye datos que no se miden de forma directa y oficial, no puede considerarse un valor determinístico perfecto. Por ello, el análisis requiere el uso de \textbf{Intervalos de Confianza (IC)} para cuantificar el riesgo de error en la medición.
 
-Descripción de la definición n\
+Para cada estimación del APC ($\hat{\theta}$), la base de datos proporciona un límite inferior (\texttt{lower\_ci}) y un límite superior (\texttt{upper\_ci}), definiendo el intervalo para cada observación:
 
+$$IC = [\hat{\theta}_{lower}, \hat{\theta}_{upper}]$$
+
+La diferencia entre el límite superior y el inferior se define como la \textbf{Amplitud del Intervalo} (representada por la variable \texttt{ci\_width}):
+
+$$ci\_width = \hat{\theta}_{upper} - \hat{\theta}_{lower}$$
+
+Esta amplitud es la medida directa de la \textbf{incertidumbre estocástica}. Un valor elevado de \texttt{ci\_width} indica una mayor variabilidad y menor precisión en los datos reportados por ese país, lo cual constituye el núcleo analítico de la presente investigación.
+
+\subsection{Medidas de Tendencia Central y Asimetría}
+
+Para evaluar el comportamiento del consumo a nivel agregado, es fundamental analizar la forma de su distribución. Para ello, se contrastará la \textbf{Media Muestral} ($\bar{x}$) con la \textbf{Mediana} ($\tilde{x}$) de la variable \texttt{alcohol\_liters\_per\_capita}.
+
+* \textbf{Media Muestral:} Representa el centro de gravedad o equilibrio de la distribución de los datos. Matemáticamente, se define como la suma de todos los valores observados dividida entre el tamaño de la muestra (n). Es una medida altamente sensible a valores extremos.
+  $$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
+* \textbf{Mediana:} Es el valor posicional que divide la serie de datos ordenados exactamente en dos partes iguales (50% superior y 50% inferior). A diferencia de la media, es una medida robusta, lo que significa que no se ve afectada por valores atípicos (outliers) de consumo extremo.
+
+La relación entre ambas medidas permite identificar sesgos distribucionales. Si $\bar{x} > \tilde{x}$, existe una asimetría positiva, lo que indicaría que un grupo reducido de países con consumos extremos eleva el promedio general, alejándolo del comportamiento típico de la mayoría de las naciones.
+
+\subsection{Criterio de Solapamiento de Intervalos}
+
+Para determinar estocásticamente si el consumo entre dos países, o entre dos años distintos, presenta diferencias estadísticamente significativas, se empleará el análisis del solapamiento de los intervalos de confianza (\texttt{lower\_ci} y \texttt{upper\_ci}).
+
+Se establecen los siguientes criterios:
+\begin{itemize}
+    \item Existe una \textbf{diferencia significativa} si el límite superior de la estimación de un grupo $A$ es estrictamente menor al límite inferior de la estimación de un grupo $B$ ($Upper\_CI_A < Lower\_CI_B$).
+    \item Existe \textbf{solapamiento} si los intervalos comparten un rango de valores. En este escenario, la diferencia observada en los estimadores puntuales (el APC) podría deberse puramente a la variabilidad aleatoria y a la falta de precisión inherente a los datos que no se miden, impidiendo concluir con certeza que una población consume más que otra.
+\end{itemize}
+
+\subsection{Robustez Estadística}
+
+En el análisis de datos sobre consumo de alcohol, la \textbf{robustez} se define como la propiedad de un estadístico de permanecer inalterado o mínimamente afectado ante la presencia de valores atípicos (\textit{outliers}) o errores de medida en la muestra. 
+
+En esta investigación, la robustez es el criterio principal para preferir la \textbf{Mediana} sobre la \textbf{Media Muestral} al momento de describir el comportamiento típico de una región. Mientras que la media se desplaza hacia los extremos cuando existen países con consumos desproporcionadamente altos, la mediana mantiene su posición central, proporcionando una visión más estable del fenómeno ante la incertidumbre de los datos.
+
+\subsection{Sesgo de Información y Variabilidad}
+
+El sesgo en este contexto se refiere a la distorsión de la medida central respecto a la realidad de la mayoría de la población. Dado que el dataset incluye el componente de incertidumbre (\texttt{ci\_width}), es necesario definir dos conceptos clave para el análisis de resultados:
+
+\begin{enumerate}
+    \item \textbf{Sesgo por Valores Extremos:} Se identifica mediante la diferencia entre la media y la mediana ($Sesgo = \bar{x} - \tilde{x}$). Un valor positivo indica que el promedio está "inflado" por países con registros inusualmente altos.
+    \item \textbf{Variabilidad de la Estimación:} Es el grado de dispersión representado por el ancho del intervalo de confianza. A mayor variabilidad, menor es la confiabilidad de la media como indicador único de riesgo para el diseño de políticas públicas.
+\end{enumerate}
 
 \chapter{Marco Metódico}
 En esta sección se presentan las metodologías y/o test necesarios relacionados con la práctica divulgada en el marco teórico, así como las fuentes de datos.
