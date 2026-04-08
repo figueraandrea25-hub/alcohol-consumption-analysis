@@ -243,14 +243,14 @@ El sesgo en este contexto se refiere a la distorsión de la medida central respe
 \begin{enumerate}
     \item \textbf{Sesgo por Valores Extremos:} Se identifica mediante la diferencia entre la media y la mediana ($Sesgo = \bar{x} - \tilde{x}$). Un valor positivo indica que el promedio está "inflado" por países con registros inusualmente altos.
     \item \textbf{Variabilidad de la Estimación:} Es el grado de dispersión representado por el ancho del intervalo de confianza. A mayor variabilidad, menor es la confiabilidad de la media como indicador único de riesgo para el diseño de políticas públicas.
-\end{enumerate}
+\end{enumerate}\
 
 \chapter{Marco Metódico}
 En esta sección se presentan las metodologías, procedimientos algorítmicos y pruebas estadísticas implementadas para validar las hipótesis planteadas en el capítulo anterior. Se detalla el tratamiento de la fuente de datos `alcohol_data.csv`, las técnicas de limpieza de datos (Data Wrangling) y los métodos de comparación de intervalos utilizados para determinar la significancia estadística de las variaciones en el consumo.
 
 Un aspecto fundamental de este diseño es la estratificación de los datos por regiones geográficas, lo que permite identificar patrones de consumo y niveles de incertidumbre diferenciados. Asimismo, con el objetivo de garantizar la estabilidad de las comparaciones y evitar sesgos coyunturales derivados de la crisis sanitaria global, la investigación toma como ventana de observación los últimos cinco años previos al fenómeno de la pandemia (2015-2019). Esta delimitación temporal permite analizar el comportamiento del APC en un contexto de normalidad socioeconómica, asegurando que la incertidumbre detectada responda a deficiencias estructurales en los registros y no a las alteraciones atípicas en el consumo y la vigilancia epidemiológica ocurridas durante el periodo del COVID-19. 
 
-El análisis se ha realizado utilizando el lenguaje de programación R bajo el entorno de desarrollo RStudio, empleando el paradigma “Tidyverse” para la manipulación eficiente de datos y la librería “ggplot2” para la visualización de los intervalos de confianza, facilitando así el estudio del comportamiento estocástico del consumo de alcohol a nivel regional y global.De igual manera se utilizara el lenguaje Python, mediante la librería Streamlit, para el desarrollo de un dashboard interactivo. Esta herramienta permite la visualización dinámica de los intervalos de confianza y el consumo por regiones, facilitando así el estudio del comportamiento de los datos. esto es lo que tengo el marco metodico y luego debo poner las bases metodicas
+El análisis se ha realizado utilizando el lenguaje de programación R bajo el entorno de desarrollo RStudio, empleando el paradigma “Tidyverse” para la manipulación eficiente de datos y la librería “ggplot2” para la visualización de los intervalos de confianza, facilitando así el estudio del comportamiento estocástico del consumo de alcohol a nivel regional y global.De igual manera se utilizara el lenguaje Python, mediante la librería Streamlit, para el desarrollo de un dashboard interactivo. Esta herramienta permite la visualización dinámica de los intervalos de confianza y el consumo por regiones, facilitando así el estudio del comportamiento de los datos. 
 
 \section{Bases metódicas utilizadas en el trabajo de investigación}
 
@@ -265,21 +265,250 @@ Dado que la investigación se basa exclusivamente en el análisis de una base de
 
 En esta sección se detallan los procedimientos algorítmicos y las técnicas estadísticas que constituyen el sustento operativo de la investigación, ejecutados secuencialmente para alcanzar los objetivos planteados \
 
-\subsection{Item 1}
+\subsection{Procedimiento de Data Wrangling (Procesamiento de Datos)}
 
-Descripción\
+El tratamiento de la fuente de datos `alcohol\_data.csv` se realizó siguiendo el paradigma "Tidyverse" en R, estructurado en las siguientes fases operativas:
 
-\subsection{Item 2}
+1.  **Carga y Validación de Estructura:** Importación del conjunto de datos y verificación de tipos de variables (categóricas y numéricas continua/entera) mediante las funciones `read.csv()` y `str()`.
+2.  **Delimitación Poblacional y Temporal:** Implementación de filtros algorítmicos con la función `filter()` de la librería `dplyr` para seleccionar exclusivamente los registros de "Both sexes" (Ambos sexos) y acotar el análisis a la ventana de observación efectiva (2015-2019).
+3.  **Selección de Atributos:** Uso de `select()` para conservar únicamente las variables críticas para el estudio: `country`, `iso3`, `year`, `alcohol\_liters\_per\_capita`, `lower\_ci`, `upper\_ci` y `ci\_width`.
+4.  **Estratificación Geográfica (Creación de Variable Derivada):** Desarrollo de un algoritmo de recodificación (mediante `mutate()` y `case_when()`) para asignar a cada país su respectiva región geográfica (ej: "África", "Américas", "Sureste Asiático", "Europa", "Mediterráneo Oriental", "Pacífico Occidental"), conveniente para el estudio.\
 
-Descripción\
+```{r formato para las tablas , include=FALSE}
 
-\subsubsection{Item 2.2}
+# Configuración de estilo global para tablas
+options(knitr.table.format = "latex") 
 
-Descripción\
+# estilo visual solicitado
+aplicar_estilo_tabla <- function(df, caption_text) {
+  df %>%
+    kable(
+      booktabs = TRUE, 
+      escape = FALSE,
+      longtable = TRUE,
+      caption = caption_text,
+      align = "c",
+      col.names = gsub("_", " ", names(df)) %>% str_to_title()
+    ) %>%
+    kable_styling(
+      latex_options = c("striped", "hold_position", "repeat_header"),
+      full_width = FALSE,
+      stripe_color = "#EBF5FB" # Azul muy tenue para filas
+    ) %>%
+    row_spec(0, bold = TRUE, color = "white", background = "#2E86C1") %>% # Encabezado Azul
+    column_spec(1, bold = TRUE)
+}
+```
 
-\subsection{Item n}
+```{r data-wrangling, echo=FALSE, message=FALSE, warning=FALSE}
 
-Descripción\
+#carga de la data
+raw_data_alcohol <- read_csv("alcohol_data.csv", show_col_types = FALSE)
+
+#Definición de Regiones (Modularización para evitar repetición)
+# Creamos un vector nombrado para facilitar la recodificación
+paises_alc <- c("ATG", "ARG", "BHS", "BRB", "BLZ", "BOL", "BRA", "CHL", "COL", "CRI", "CUB", "DMA", "DOM", "ECU", "SLV", "GRD", "GTM", "GUY", "HTI", "HND", "JAM", "MEX", "NIC", "PAN", "PRY", "PER", "KNA", "LCA", "VCT", "SUR", "TTO", "URY", "VEN")
+paises_norte <- c("CAN", "USA")
+paises_asia <- c("AFG", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "COK", "CYP", "PRK", "EGY", "FJI", "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KGZ", "KIR", "KWT", "LAO", "LBN", "MYS", "MDV", "MHL", "FSM", "MNG", "MMR", "NRU", "NPL", "NZL", "NIU", "OMN", "PAK", "PLW", "PNG", "PHL", "QAT", "KOR", "WSM", "SAU", "SGP", "SLB", "LKA", "SYR", "TJK", "THA", "TLS", "TON", "TUR", "TKM", "TUV", "ARE", "UZB", "VUT", "VNM", "YEM")
+paises_europa <- c("ALB", "AND", "ARM", "AUT", "AZE", "BLR", "BEL", "BIH", "BGR", "HRV", "CZE", "DNK", "EST", "FIN", "FRA", "GEO", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "MCO", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "MDA", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR")
+paises_africa <- c("DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "TGO", "TUN", "UGA", "TZA", "ZMB", "ZWE")
+
+#Procesamiento
+clean_data_alcohol <- raw_data_alcohol %>%
+  filter(sex == "Both sexes", year %in% 2015:2019) %>%
+  select(country, iso3, year, alcohol_liters_per_capita, lower_ci, upper_ci, ci_width) %>%
+  drop_na(alcohol_liters_per_capita, ci_width) %>%
+  mutate(
+    Region = case_when(
+      iso3 %in% paises_alc    ~ "América Latina y el Caribe",
+      iso3 %in% paises_norte  ~ "América del Norte",
+      iso3 %in% paises_asia   ~ "Asia",
+      iso3 %in% paises_europa ~ "Europa",
+      iso3 %in% paises_africa ~ "África",
+      TRUE                    ~ "Otras/Oceanía"
+    ),
+    across(c(country, iso3, year, Region), as.factor)
+  )
+
+#imprimimos las dimensiones del data frame limpio y las primeras filas
+ print(paste("Registros válidos (Ambos sexos, 2015-2019):", nrow(clean_data_alcohol)))
+print("Estructura final de los datos procesados y estratificados (str):")
+str(clean_data_alcohol)
+head(clean_data_alcohol %>% select(country, iso3, year, Region)) 
+```
+
+\subsection{Análisis Comparativo del Impacto de la Limpieza de Datos (ETL)}
+
+En concordancia con el **Objetivo 1** de la investigación, y siguiendo la rigurosidad metodológica de estudios descriptivos previos, se realizó un análisis comparativo para evaluar estadísticamente el impacto del proceso de Extracción, Transformación y Carga (ETL) sobre el conjunto de datos. No se debe proceder a la eliminación ciega de registros sin comprender la naturaleza y el sesgo potencial que esto introduce en la muestra final.
+
+El procedimiento metodológico consistió en:
+
+1.  **Cuantificación de Pérdida de Registros:** Se comparó el número de observaciones nativas (`raw\_data\_alcohol`) con el número de observaciones en el data frame depurado (`clean\_data\_alcohol`), determinando el porcentaje de datos perdidos durante la limpieza.
+
+2.  **Análisis de Tendencia Central (Pre vs. Post Limpieza):** Se calcularon las medidas de tendencia central robustas (media aritmética y mediana) para la variable principal de consumo (`alcohol\_liters\_per\_capita`) tanto en la base de datos nativa como en la limpia.
+
+3.  **Evaluación de Sesgo:** La comparación de la media y la mediana pre y post limpieza permite identificar si la eliminación de registros con valores nulos (`NA`) generó un cambio significativo en el promedio reportado, sugiriendo un sesgo sistemático en la recolección o reporte de datos a nivel global.
+
+```{r comparativo-etl}
+
+# Análisis de impacto metodológico
+n_inicial <- raw_data_alcohol %>% filter(sex == "Both sexes", year %in% 2015:2019) %>% nrow()
+n_final   <- nrow(clean_data_alcohol)
+
+tendencia_pre <- raw_data_alcohol %>%
+  filter(sex == "Both sexes", year %in% 2015:2019) %>%
+  summarize(
+    Estado = "Original (Pre-Limpieza)",
+    Muestra = n(),
+    Media = mean(alcohol_liters_per_capita, na.rm = TRUE),
+    Mediana = median(alcohol_liters_per_capita, na.rm = TRUE)
+  )
+
+tendencia_post <- clean_data_alcohol %>%
+  summarize(
+    Estado = "Depurado (Post-Limpieza)",
+    Muestra = n(),
+    Media = mean(alcohol_liters_per_capita),
+    Mediana = median(alcohol_liters_per_capita)
+  )
+
+tabla_etl <- bind_rows(tendencia_pre, tendencia_post) %>%
+  mutate(Sesgo_Absoluto = Media - Mediana)
+
+aplicar_estilo_tabla(tabla_etl, "Comparación post-limpieza de los datos")
+``` 
+
+\subsubsection{Simulación de Fallos y Validación del Protocolo ETL}
+
+Debido a la alta integridad de la fuente secundaria en el periodo 2015-2019, se realizó un experimento de control para validar la capacidad de respuesta del protocolo de limpieza. Este procedimiento consistió en inyectar artificialmente un 10% de ruido (valores NA) en una réplica de la muestra original.
+
+El objetivo es demostrar, mediante una prueba de estrés, que el algoritmo de depuración identifica y elimina correctamente las inconsistencias, garantizando que los resultados finales de la investigación no se vean alterados por fallos en el reporte de origen.\
+
+```{r fase-ensuciado de la data}
+
+set.seed(123)
+muestra_sucia <- clean_data_alcohol %>%
+  mutate(
+    alcohol_liters_per_capita = if_else(runif(n()) < 0.10, NA_real_, alcohol_liters_per_capita),
+    ci_width = if_else(runif(n()) < 0.05, NA_real_, ci_width)
+  )
+
+validación_algoritmo <- data.frame(
+  Fase = c("Muestra Contaminada", "Muestra Recuperada"),
+  N_Total = c(nrow(muestra_sucia), nrow(muestra_sucia %>% drop_na(alcohol_liters_per_capita, ci_width))),
+  Valores_NA = c(sum(is.na(muestra_sucia$alcohol_liters_per_capita)), 0)
+)
+
+aplicar_estilo_tabla(validación_algoritmo, "Prueba de Estrés: Validación del Algoritmo de Depuración")
+```
+
+\subsubsection{Protocolo de Recuperación (ETL)}
+
+Una vez generada la muestra con inconsistencias, se aplicó el algoritmo de depuración definido en el Objetivo 1. El proceso consiste en la identificación y eliminación automática de las filas contaminadas, garantizando que la base de datos resultante sea apta para el cálculo de solapamientos de intervalos de confianza.
+
+```{r dataset-final, echo=FALSE, message=FALSE, warning=FALSE}
+
+muestra_recuperada <- muestra_sucia %>%
+  drop_na(alcohol_liters_per_capita, ci_width)
+
+comparacion_recuperacion <- data.frame(
+  Estado = c("Muestra Contaminada", "Muestra Recuperada"),
+ `Registros Totales` = c(nrow(muestra_sucia), nrow(muestra_recuperada)),
+ `Valores NA Restantes` = c(sum(is.na(muestra_sucia$alcohol_liters_per_capita) | is.na(muestra_sucia$ci_width)), 0),
+  `Consumo Medio` = c(mean(muestra_sucia$alcohol_liters_per_capita, na.rm=TRUE), 
+                      mean(muestra_recuperada$alcohol_liters_per_capita))
+)
+
+aplicar_estilo_tabla(validación_algoritmo, "Validación de la eficacia del algoritmo de limpieza de datos")
+```
+
+\subsection{Análisis Descriptivo y de Tendencia Central}
+
+Una vez validada la integridad del protocolo de procesamiento mediante la prueba de estrés, se procedió a la ejecución del Análisis Descriptivo y de Tendencia Central sobre la muestra definitiva (2015-2019). Esta fase es fundamental para establecer la línea base comparativa de la investigación, permitiendo transformar los microdatos nacionales en métricas agregadas que caracterizan el comportamiento del consumo y su precisión técnica a nivel global.
+
+El tratamiento estadístico se centró en la reducción de datos para obtener la Media Aritmética (APC) y la Desviación Estándar, junto con el análisis del Ancho del Intervalo de Confianza (ci_width) como métrica de calidad.\
+
+```{r analisis-descriptivo-final}
+
+# Consolidación de métricas finales
+resumen_regional <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Consumo_Medio = mean(alcohol_liters_per_capita),
+    Mediana_Consumo = median(alcohol_liters_per_capita),
+    Desviación_Std = sd(alcohol_liters_per_capita),
+    Incertidumbre_Promedio = mean(ci_width),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(Consumo_Medio))
+
+# Añadir fila de Total Global con manejo estadístico correcto
+total_global <- clean_data_alcohol %>%
+  summarise(
+    Region = "TOTAL GLOBAL",
+    Consumo_Medio = mean(alcohol_liters_per_capita),
+    Mediana_Consumo = median(alcohol_liters_per_capita),
+    Desviación_Std = sd(alcohol_liters_per_capita),
+    Incertidumbre_Promedio = mean(ci_width)
+  )
+
+tabla_maestra <- bind_rows(resumen_regional, total_global)
+
+aplicar_estilo_tabla(tabla_maestra, "Métricas de Tendencia Central y Calidad de Datos por Macro-Región")
+```
+
+\subsubsection{Evaluación de la media frente a la mediana}
+
+Debido a la naturaleza heterogénea del consumo de alcohol a nivel global, se incorporó un análisis de robustez comparando la Media Aritmética frente a la Mediana por cada macro-región. Este procedimiento tiene como objetivo detectar posibles sesgos causados por valores atípicos `(outliers)` países con consumos excepcionalmente altos o bajos— que pudieran desplazar el promedio y, por ende, distorsionar la interpretación del ancho de los intervalos de confianza `(ci_width)`.
+
+Una divergencia mínima entre ambas medidas (Sesgo Relativo < 10%) validará el uso de la media como estimador central representativo para la posterior comparación de intervalos. Para este cálculo se utilizó el siguiente algoritmo:\
+
+```{r calculo-robustez-central}
+
+# Cálculo de indicadores de asimetría para validar la tendencia central
+analisis_robustez <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Media = mean(alcohol_liters_per_capita),
+    Mediana = median(alcohol_liters_per_capita),
+    # Calculamos la diferencia porcentual para medir el sesgo
+    Sesgo_Relativo_Pct = ((Media - Mediana) / Mediana) * 100,
+    .groups = 'drop'
+  )
+
+ # Tabla para el informe
+aplicar_estilo_tabla(tabla_maestra, "Contraste entre la media y la meidana")
+```
+
+
+\subsubsection{Técnica de Comparación de Intervalos de Confianza y Regla de Decisión para el Consumo Regional}
+
+Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las pruebas paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:\
+
+```{r comparacion-intervalos-regional, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Preparación de datos para visualización técnica
+data_plot <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Media = mean(alcohol_liters_per_capita),
+    LI = mean(lower_ci),
+    LS = mean(upper_ci)
+  )
+
+ggplot(data_plot, aes(x = reorder(Region, Media), y = Media)) +
+  geom_errorbar(aes(ymin = LI, ymax = LS), width = 0.2, color = "#2E86C1", size = 1) +
+  geom_point(size = 3, color = "#1B4F72") +
+  coord_flip() +
+  labs(
+    title = "Inferencia Visual: Consumo de Alcohol por Región (2015-2019)",
+    subtitle = "Intervalos de Confianza (95%) Agregados",
+    x = "Macro-Región", y = "Litros de Alcohol Puro APC",
+    caption = "Fuente: Análisis basado en alcohol_data.csv"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
+``` 
 
 \chapter{Análisis de Resultados}
 
