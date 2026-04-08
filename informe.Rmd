@@ -246,11 +246,24 @@ El sesgo en este contexto se refiere a la distorsión de la medida central respe
 \end{enumerate}
 
 \chapter{Marco Metódico}
-En esta sección se presentan las metodologías y/o test necesarios relacionados con la práctica divulgada en el marco teórico, así como las fuentes de datos.
- 
+En esta sección se presentan las metodologías, procedimientos algorítmicos y pruebas estadísticas implementadas para validar las hipótesis planteadas en el capítulo anterior. Se detalla el tratamiento de la fuente de datos `alcohol_data.csv`, las técnicas de limpieza de datos (Data Wrangling) y los métodos de comparación de intervalos utilizados para determinar la significancia estadística de las variaciones en el consumo.
+
+Un aspecto fundamental de este diseño es la estratificación de los datos por regiones geográficas, lo que permite identificar patrones de consumo y niveles de incertidumbre diferenciados. Asimismo, con el objetivo de garantizar la estabilidad de las comparaciones y evitar sesgos coyunturales derivados de la crisis sanitaria global, la investigación toma como ventana de observación los últimos cinco años previos al fenómeno de la pandemia (2015-2019). Esta delimitación temporal permite analizar el comportamiento del APC en un contexto de normalidad socioeconómica, asegurando que la incertidumbre detectada responda a deficiencias estructurales en los registros y no a las alteraciones atípicas en el consumo y la vigilancia epidemiológica ocurridas durante el periodo del COVID-19. 
+
+El análisis se ha realizado utilizando el lenguaje de programación R bajo el entorno de desarrollo RStudio, empleando el paradigma “Tidyverse” para la manipulación eficiente de datos y la librería “ggplot2” para la visualización de los intervalos de confianza, facilitando así el estudio del comportamiento estocástico del consumo de alcohol a nivel regional y global.De igual manera se utilizara el lenguaje Python, mediante la librería Streamlit, para el desarrollo de un dashboard interactivo. Esta herramienta permite la visualización dinámica de los intervalos de confianza y el consumo por regiones, facilitando así el estudio del comportamiento de los datos. esto es lo que tengo el marco metodico y luego debo poner las bases metodicas
+
 \section{Bases metódicas utilizadas en el trabajo de investigación}
 
-Desarrollo\
+ La presente investigación es de tipo descriptiva. Su objetivo central es caracterizar el fenómeno del consumo de alcohol per cápita y, fundamentalmente, describir la evolución de la incertidumbre técnica asociada a estos reportes globales entre los años 2015 y 2019. No se busca establecer relaciones de causa y efecto, sino realizar una "radiografía" precisa de la consistencia de los datos a través del análisis de medidas de tendencia central (media) y dispersión (desviación estándar, ancho del intervalo de confianza `ci\_width`).
+
+
+El diseño de la investigación es longitudinal, específicamente un análisis de datos de panel. Esto se debe a que se analizan las mismas variables (consumo e incertidumbre) para las mismas unidades de observación (países) a lo largo de un periodo de tiempo continuo (2015-2019). Este diseño permite observar no solo el estado actual, sino los cambios y la evolución temporal de la precisión en los reportes de salud pública.
+
+
+Dado que la investigación se basa exclusivamente en el análisis de una base de datos preexistente (`alcohol\_data.csv`), se clasifica como una investigación documental o basada en fuentes secundarias. No hubo recolección directa de datos primarios en campo; el trabajo consistió en el procesamiento, limpieza y análisis estadístico de información ya recopilada y validada por una autoridad global.
+
+
+En esta sección se detallan los procedimientos algorítmicos y las técnicas estadísticas que constituyen el sustento operativo de la investigación, ejecutados secuencialmente para alcanzar los objetivos planteados \
 
 \subsection{Item 1}
 
