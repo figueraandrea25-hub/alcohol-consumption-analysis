@@ -276,10 +276,10 @@ El tratamiento de la fuente de datos `alcohol\_data.csv` se realizó siguiendo e
 
 ```{r formato para las tablas , include=FALSE}
 
-# Configuración de estilo global para tablas
+# Configuración de estilo global para las tablas
 options(knitr.table.format = "latex") 
 
-# estilo visual solicitado
+# estilo visual 
 aplicar_estilo_tabla <- function(df, caption_text) {
   df %>%
     kable(
@@ -293,7 +293,7 @@ aplicar_estilo_tabla <- function(df, caption_text) {
     kable_styling(
       latex_options = c("striped", "hold_position", "repeat_header"),
       full_width = FALSE,
-      stripe_color = "#EBF5FB" # Azul muy tenue para filas
+      stripe_color = "#EBF5FB" # Azul claro para filas
     ) %>%
     row_spec(0, bold = TRUE, color = "white", background = "#2E86C1") %>% # Encabezado Azul
     column_spec(1, bold = TRUE)
@@ -355,6 +355,7 @@ El procedimiento metodológico consistió en:
 n_inicial <- raw_data_alcohol %>% filter(sex == "Both sexes", year %in% 2015:2019) %>% nrow()
 n_final   <- nrow(clean_data_alcohol)
 
+#como se comportan la muestra cruda
 tendencia_pre <- raw_data_alcohol %>%
   filter(sex == "Both sexes", year %in% 2015:2019) %>%
   summarize(
@@ -364,6 +365,7 @@ tendencia_pre <- raw_data_alcohol %>%
     Mediana = median(alcohol_liters_per_capita, na.rm = TRUE)
   )
 
+#estado post limpieza
 tendencia_post <- clean_data_alcohol %>%
   summarize(
     Estado = "Depurado (Post-Limpieza)",
@@ -386,6 +388,7 @@ El objetivo es demostrar, mediante una prueba de estrés, que el algoritmo de de
 
 ```{r fase-ensuciado de la data}
 
+#contaminado la muestra 
 set.seed(123)
 muestra_sucia <- clean_data_alcohol %>%
   mutate(
@@ -442,7 +445,7 @@ resumen_regional <- clean_data_alcohol %>%
   ) %>%
   arrange(desc(Consumo_Medio))
 
-# Añadir fila de Total Global con manejo estadístico correcto
+#totales de las metricas
 total_global <- clean_data_alcohol %>%
   summarise(
     Region = "TOTAL GLOBAL",
