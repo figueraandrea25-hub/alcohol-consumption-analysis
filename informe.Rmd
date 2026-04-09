@@ -1,0 +1,553 @@
+---
+title: "El Consumo de alcohol per capital y los datos que no se miden"
+author:
+- Andrea Figuera
+- Eduardo Espinoza
+date: "Abril 2026"
+output:
+  html_document:
+    toc: yes
+    df_print: paged
+  pdf_document:
+    template: template.tex
+    keep_tex: yes
+    toc: yes
+    number_sections: yes
+    citation_package: natbib
+director:
+- Jesus Ochoa
+- Oliver Triveño
+lugar: Caracas
+facultad:
+- Facultad de Ciencias Económicas y Sociales
+- Escuela de Estadistica y Ciencias Actuariales
+escudo: Latex/Classes/Escudos/faces
+bibliography: bibliografia.bib
+degree: Computación I
+abstract: |
+  Resumen del trabajo de investigación...
+---
+
+```{r setup, include=FALSE}
+# Configuración global de chunks
+knitr::opts_chunk$set(
+  echo = FALSE,        # Mostrar código
+  warning = FALSE,    # Ocultar advertencias
+  message = FALSE,    # Ocultar mensajes de carga
+  fig.align = "center",
+  out.width = "90%",
+  fig.pos = "H",
+  out.extra = ""
+)
+
+# Cargar librerías necesarias
+library(tidyverse)
+library(knitr)
+library(kableExtra)
+library(scales)
+```
+
+\chapter*{Introducción}
+
+Introducción del trabajo de investigación
+
+\chapter{Planteamiento del Problema}
+Cuando se habla del consumo de alcohol al nivel mundial, los resultados de un análisis generalmente son presentados según qué tan por encima o por debajo esté el promedio de cierta población estudiada en relación con el **indicador transversal** utilizado por la Organización Mundial de la Salud (OMS). El consumo de alcohol per cápital es un tema en el que se evalúa el riesgo y el punto donde el consumo se categoriza como un tema crítico para la salud pública, al momento de determinarlo se choca directamento con el **reduccionismo estadístico**, el cual hace referencia al como la interpretación de los datos viene presentada bajo **indicadores** estadísticos que buscan reducir la realidad objetiva de poblaciones enteras a un simple promedio. 
+
+Entes oficiales de salud pública como la OMS o la Organización Panamericana de la Salud (OPS) usan herramientas estadísticas para la recolección, interpretación y presentación de los datos; la OMS establece una medida estandar para el análisis global del consumo de alcohol que define de la siguiente manera:
+
+>El consumo total de alcohol per cápita (APC) se define como la cantidad total (suma del promedio de tres añoS registrado y el promedio de tres años de APC no registrado, ajustado por el consumo turístico promedio de tres años) de alcohol consumido por adulto (15+ años) durante un año calendario, en litros de alcohol puro. (OMS, 2018, p. 411)
+
+Esta definición revela la complejidad que puede esconderse detrás de un solo numero. Al involucrar tantas variables el APC pasa de ser solo un promedio a convertirse mas en una estimación sujeta a un gran margen de error. Sin embargo, en el discurso público, esta cifra suele presentarse como una verdad absoluta, ignorando que el promedio es una medida extremadamente sensible a valores atípicos, extremos y faltantes. Un promedio suele ser una medida muy débil al momento de trabajar con datos que contienen mayor dispersión.
+
+Al hablar del consumo de alcohol generalmente se encuentra un sesgo muy grande entre los datos: si un grupo pequeño consume de forma masiva, el promedio subirá, estigmatizando a toda una población por el comportamiento de una minoría, alejandose de la realidad o peor aún, se asume que el riesgo está distribuido de forma equitativa cuando en realidad está concentrado en sectores específicos que el promedio no logra mostrar. En ciertos casos la mediana suele ser más representativa pero los entes políticos prefieren el promedio por ser este más manipulable. Si un país no registra bien sus datos, el promedio simplemente ignora esos vacíos, esto genera un **sesgo de selección**, el promedio parece saludable solo porque no se esta contando los datos que no se puden medir. Entonces esto dice que "lo que no se mide, no existe". 
+Siendo los valores faltantes un peligro. Muchas veces, los países con las crisis de consumo más graves tienen los sistemas de registro más deficientes. Cuando un reporte ignora estos huecos de información, el promedio nacional se ve "limpio", permitiendo que se construyan narrativas basadas en un sesgo de selección. Al final, exponer estos datos sin explicar la variabilidad técnica (como el ancho de los intervalos de confianza) convierte la estadística en una herramienta que oculta las verdaderas crisis de salud detrás de una falsa sensación de precisión.
+
+A todo lo antes expuesto le queda la frase popular conocida en la estadística; "No cruces un río que tiene un promedio de un metro de profundidad, porque podrías ahogarte en la parte que mide tres metros"
+
+El promedio es la medida que los gobiernos suelen usar para decir si un país tiene un elevado consumo de alcohol en comparación con el promedio mundial de la OMS. También se utiliza la **Prevalencia de Consumo**, que mide qué porcentaje de la población bebió en el último año, y un indicador más técnico llamado **DALY**, que estima cuántos años de vida saludable pierde una comunidad por problemas con la bebida. El detalle está cuando estas cifras se presentan de forma distinta a lo que son, **estimaciones**. Al enfocarse solo en estos números finales, se deja de lado la incertidumbre y el error que hay detrás de cada dato, permitiendo que se construyan discursos donde un promedio bajo oculte una crisis de salud real en sectores específicos.
+
+ Como dicta la conocida paradoja estadística: si una persona se come un pollo entero y otra no come nada, el promedio indicará que cada una consumió medio pollo. En la práctica, este sesgo puede ser utilizado políticamente para proyectar una falsa sensación de éxito o estabilidad, permitiendo que un gobierno declare un bajo consumo en su región mientras ignora deliberadamente a los sectores con consumos explosivos o problemáticos que quedan ocultos tras la cifra central.
+
+Esta "mentira estadística" sustenta los factores críticos que afectan la veracidad de los datos recolectados:
+
+Un promedio carece de valor científico si no se analiza su margen de error. 
+
+Una región puede reportar un consumo bajo, pero si el ancho de su intervalo de confianza es excesivamente grande, esto no refleja un comportamiento social claro, sino una deficiencia en la calidad de la recolección de los datos o una variabilidad inmanejable.
+
+El error más común en la comparación internacional es asumir que distintos promedios implican distintas realidades. Si al comparar dos naciones sus intervalos de confianza se solapan significativamente, estadísticamente no existe evidencia suficiente para afirmar que una consume más que la otra. El solapamiento es la prueba de que el promedio, por sí solo, es insuficiente para establecer jerarquías de consumo.
+
+La ausencia de registros en ciertos periodos o sectores poblacionales desplaza el promedio hacia valores que no representan la realidad. El uso de bases de datos con vacíos informativos permite construir narrativas que benefician agendas institucionales en lugar de reflejar la salud pública real.
+
+Un caso real que ilustra esta problemática se observa en los reportes globales de la Organización Mundial de la Salud (OMS). En regiones con sistemas de vigilancia débiles, se reportan promedios nacionales que subestiman el riesgo real debido a que la incertidumbre de la medición es tan alta que el dato central deja de ser representativo. De igual forma, comparaciones clásicas entre Europa del Este y Europa Occidental a menudo revelan que, aunque los titulares de prensa resalten diferencias en los promedios, los intervalos de confianza de estos países suelen solaparse, indicando que las diferencias podrían no ser estadísticamente significativas. 
+
+Esto responde a que la variabilidad del consumo no es constante ni uniforme entre las naciones.Por lo tanto, este trabajo de investigación se propone cuestionar la validez de las comparaciones tradicionales de consumo de alcohol. El problema no radica solo en la cantidad consumida, sino en la incertidumbre estadística que se desprende de los datos. El desafío es, entonces la implementación de algoritmos que permitan una gestión rigurosa de los datos faltantes **(missing data)**, entendiendo que su ausencia no es aleatoria, sino un indicador de la debilidad de los sistemas de vigilancia. Más allá de la implementación de medidas de tendencia central, este trabajo se enfoca en la visualización de densidades de probabilidad y el procesamiento de intervalos de confianza. El objetivo es demostrar mediante el análisis de datos que, ante una alta varianza y un solapamiento significativo de las distribuciones, el promedio pierde su capacidad explicativa. Actuando en colaboración con la ciencia computacional: se requiere procesar y visualizar estos niveles de solapamiento y dispersión para demostrar que, sin un análisis riguroso de la incertidumbre, la estadística deja de ser una herramienta de precisión para convertirse en una narrativa que oculta las verdaderas crisis de consumo.\
+
+Argumento final. Debido a esto, se plantea las siguientes preguntas de investigación:\
+
+
+\textbf{1.}	¿Cómo influyen los valores atípicos y los datos faltantes en la representatividad del promedio del consumo de alcohol?\
+
+\textbf{2.}	¿Qué tan confiables son los promedios globales si consideramos que los márgenes de error varían drásticamente entre regiones, y cómo afecta esta diferencia la precisión de lo que se reporta?\
+
+\textbf{3.}	¿En qué medida el solapamiento de los intervalos de confianza invalida las comparaciones y jerarquías de consumo tradicionales?\
+
+
+\section{Justificación}
+
+La presente investigación se fundamenta en la necesidad de pasar de una estadística descriptiva básica hacia un análisis de datos crítico que integre la **incertidumbre** como una variable fundamental para ser presentada a la sociedad. En el ámbito académico de la **Escuela de Estadística y Ciencias Actuariales (EECA)**, es necesario demostrar que el rol del analista no es simplemente procesar cifras, sino cuestionar la representatividad de la información que sustenta las políticas públicas globales.
+La importancia de este análisis radica en desmontar el uso político de las medidas de tendencia central. Un gobierno puede declarar una gestión exitosa basándose en la reducción de un promedio, ignorando deliberadamente que dicha cifra puede ser el resultado de datos altamente sesgados o con una incertidumbre tan elevada que la comparación pierde validez científica. Al estudiar el solapamiento de los intervalos, esta investigación busca devolverle la rigurosidad a la interpretación de los datos, demostrando que la estadística no debe servir para simplificar la realidad, sino para revelar su complejidad.
+
+**Relevancia Técnica y Delimitación del Alcance**
+Desde una perspectiva teórica, el trabajo contribuye al campo de la estadística social al demostrar que el promedio, como medida de tendencia central única, es insuficiente para caracterizar el consumo de alcohol. Al introducir conceptos como el **solapamiento de intervalos de confianza y la variabilidad**, esta investigación enriquece el debate académico sobre cómo deben compararse las realidades de distintas naciones, evitando conclusiones apresuradas que ignoran la dispersión de los datos.
+
+Desde el punto de vista computacional, este proyecto se justifica al utilizar herramientas de programación (R y Python) para extraer y tratar la **incertidumbre** declarada en los reportes oficiales. Dado que la investigación se desarrolla en una etapa inicial de la formación académica, el enfoque no pretende realizar estimaciones propias ni modelos de regresión, sino centrarse exclusivamente en el **procesamiento y visualización del solapamiento de los intervalos de confianza** ya proporcionados en el dataset.
+Esta delimitación es clave: el valor agregado de este trabajo radica en la capacidad de convertir tablas de datos crudos en **visualizaciones de densidades de probabilidad** que evidencien visualmente cuándo una diferencia entre países es estadísticamente significativa y cuándo es simplemente producto de la variabilidad del indicador transversal.
+
+**Relevancia Social y Ética**
+Socialmente, el trabajo se justifica al exponer cómo el reduccionismo estadístico puede ser utilizado para construir narrativas que ocultan crisis sanitarias reales. Al procesar los intervalos de confianza y los datos faltantes presentes en el dataset, se busca demostrar que un promedio nacional "limpio" puede ser el resultado de sistemas de registro deficientes, permitiendo que se ignore deliberadamente a los sectores con consumos problemáticos. 
+ Identificar vulnerabilidades ocultas, a la hora de tomar decisiones y entender el ancho de la incertidumbre permite reconocer en qué regiones la recolección de datos es deficiente o dónde el consumo es tan dispar que un promedio bajo no garantiza la ausencia de riesgos. Esto permite transitar de una política basada en cifras generales a una basada en la realidad de los intervalos, protegiendo así a los sectores poblacionales que quedan invisibilizados en los reportes tradicionales.
+ 
+Así la presente investigación se plantea por la necesidad imperativa de dotar a la salud pública de herramientas de análisis que trasciendan la interpretación superficial de los datos. En un contexto global donde la información estadística es utilizada con frecuencia para validar narrativas políticas, este estudio aporta un marco crítico que devuelve la importancia a la **variabilidad e incertidumbre** como componentes esenciales de la verdad científica.
+
+**Aporte Académico**
+Finalmente, la **justificación metodológica** se sustenta en el uso de herramientas computacionales de vanguardia. La complejidad de procesar un conjunto de datos extenso, que abarca múltiples años y regiones con valores faltantes, hace que el uso de **Python o R** no sea opcional, sino un requisito técnico. El manejo de estructuras de datos y la generación de visualizaciones avanzadas permiten exponer visualmente el solapamiento que los métodos manuales no logran captar. Así, este proyecto no solo cumple con una exigencia académica, sino que demuestra cómo la computación aplicada a la estadística es el único camino para desarticular las "mentiras" que surgen de un análisis de datos incompleto.
+
+Este proyecto contribuye al repositorio **"Análisis de consumo de alcohol e incertidumbre (Computación 1 - UCV)"**. Aporta un modelo de análisis que no solo lee cifras, sino que evalúa la veracidad de las comparaciones internacionales mediante el rigor computacional, rescatando la hipótesis de que la estadística debe servir para revelar realidades, no para ocultarlas tras una falsa sensación de precisión.\
+
+\section{Objetivos}
+ 
+\subsection{Objetivo General}
+\begin{itemize}
+  \item{Cuestionar la validez de las comparaciones tradicionales del consumo de alcohol a nivel mundial mediante el procesamiento computacional de los intervalos de confianza proporcionados en el dataset, con el fin de evidenciar el solapamiento de datos y la incertidumbre estadística que el promedio suele invisibilizar.}
+\end{itemize}
+
+\subsection{Objetivos Específicos}
+\begin{itemize}
+  \item{Extraer y depurar los registros de consumo de alcohol y sus intervalos de confianza, gestionando los valores faltantes y contrastando la media frente a la mediana para identificar el sesgo generado por valores atípicos (outliers) en el promedio.}
+  \item{Evaluar la variabilidad en la precisión de las estimaciones analizando el ancho de los márgenes de error para cuestionar la consistencia de los reportes globales}
+  \item{Identificar y visualizar los niveles de solapamiento de los intervalos de confianza, con el fin de determinar regiones donde las diferencias en los promedios carecen de verdad estadística, culminando en la generación de un reporte técnico reproducible que evidencie la incertidumbre de los datos.}
+\end{itemize}
+
+
+\section{Cobertura}
+
+\subsection{Horizontal}
+
+La cobertura horizontal del presente estudio abarca las características intrínsecas del consumo de alcohol registradas en la base de datos alcohol_data.csv. Se consideran las **dimensiones descriptivas** del registro (país (country), código iso3, y año (year)).**Adicionalmente, se incorporará una variable derivada para agrupar los países en regiones geográficas, facilitando un análisis comparativo a mayor escala**. Se incluyen las **métricas de tendencia central**, específicamente el consumo de alcohol per cápita en litros (alcohol_liters_per_capita).Finalmente, se integran las **variables de incertidumbre técnica**, analizando el límite inferior (lower_ci), el límite superior (upper_ci) y el ancho del intervalo de confianza (ci_width) para cuestionar la precisión de los reportes globales.\
+
+\begin{table}[ht]
+\centering
+\caption{Variables consideradas en el análisis de consumo e incertidumbre}
+\label{tab:variables}
+% Ajustamos el ancho a 12cm para que quepa bien el texto
+\resizebox{15cm}{!} {
+% Definimos 3 columnas centradas (c c c)
+\begin{tabular}{ccc}
+  \hline
+  \textbf{NOMBRE DE LA VARIABLE} & \textbf{TIPO DE VARIABLE} & \textbf{DESCRIPCIÓN} \\
+  \hline
+  país (`country`) & Categórica (Dimensión) & Nombre del país reportado. \\
+  año (`year`) & Numérica Entera (Tiempo) & Año del reporte (2000-2019). \\
+  consumo (`alcohol\_liters\_per\_capita`) & Numérica Continua (Métrica) & Consumo per cápita en litros. \\
+  ancho del intervalo (`ci\_width`) & Numérica Continua (Incertidumbre) & Medida de la precisión del reporte. \\
+  región (derivada) & Categórica (Agrupación) & Región geográfica (creada para análisis). \\
+  \hline
+\end{tabular}
+}
+\end{table}
+
+\subsection{Vertical}
+
+La cobertura vertical del trabajo de investigación comprende un total de 4324 observaciones (registros). Cada fila representa un dato anual de consumo por país. Para efectos de esta investigación, se realizó una delimitación poblacional filtrando únicamente los registros correspondientes a **"Ambos sexos"** (Both sexes). El alcance temporal de los datos es longitudinal, abarcando desde el año **2000 hasta el año 2019**. Esta delimitación permite un análisis comparativo y **evolutivo** para observar las variaciones en los reportes de salud pública a lo largo de estas dos décadas.\
+
+
+\section{Periodo de Referencia}
+
+Para la presente investigación, el periodo de referencia efectivo para el análisis descriptivo y de incertidumbre técnica se estableció en el intervalo **2000-2019**. Este rango de dos décadas fue seleccionado estratégicamente debido a que presenta la mayor **consistencia y precisión** en los reportes de salud global sobre consumo de alcohol per cápita. A partir del año 2000, los métodos de recopilación de datos y los modelos de estimación de intervalos de confianza fueron estandarizados, lo que reduce los márgenes de error (`ci_width`) y permite una comparación longitudinal más robusta entre países y regiones.El procesamiento de la información se realizó con corte a Abril de 2026\
+
+\section{Variables}
+
+**La variable principal en estudio (Variable Dependiente/Objetivo) es el consumo (`alcohol\_liters\_per\_capita`)**, que representa el promedio de litros de alcohol puro consumidos por persona al año en la población de Ambos sexos (`Both sexes`). Esta métrica de tendencia central es fundamental para evaluar las tendencias globales de salud pública.
+
+**Como variables explicativas o independientes se analizan:**
+
+1.  **Variables Temporales y Geográficas:**
+    * **Año (`year`)**: Año del reporte (2000-2019).
+    * **País (`country`)**: Nombre del país reportado.
+    * **Código ISO3 (`iso3`)**: Código estandarizado de tres letras del país.
+
+2.  **Variable Geográfica Derivada:**
+    * **Región (derivada)**: Agrupación geográfica de países (creada para este análisis, ej: "Américas", "Europa", "África"). Esta variable permite un análisis comparativo y de consistencia a una escala mayor, facilitando la identificación de patrones regionales de incertidumbre técnica.
+
+3.  **Variables de Incertidumbre Técnica:**
+    * **Intervalo de Confianza (Lower CI / Upper CI)**: Límites inferior (`lower\_ci`) y superior (`upper\_ci`) que delimitan el rango de la estimación.
+    * **Ancho del Intervalo (`ci\_width`)**: Medida de la precisión técnica, calculada como la diferencia entre los límites superior e inferior. Un ancho mayor indica una menor consistencia en el reporte global./
+    
+\chapter{Marco Teórico}
+
+\section{Bases Teóricas}
+
+El presente capítulo establece los fundamentos estadísticos y actuariales necesarios para el análisis del consumo de alcohol a nivel global y la cuantificación de su incertidumbre. Todo el marco conceptual se ajusta estrictamente a las variables observadas en la base de datos objeto de este estudio.
+
+\subsection{Consumo de Alcohol Total Per Cápita (APC)}
+
+El indicador principal de este estudio es el Consumo de Alcohol Total Per Cápita (APC), representado en el conjunto de datos por la variable \texttt{alcohol\_liters\_per\_capita}. Técnicamente, se define como la cantidad total (en litros) de alcohol puro consumido por la población en un país durante un año específico.
+
+Desde la perspectiva estadístico-actuarial, el valor reportado como APC es un \textbf{estimador puntual} de la media poblacional ($\mu$). Dado que es imposible conocer el consumo exacto y absoluto de cada individuo en una nación (debido a la existencia de consumo no registrado, como la producción artesanal o el mercado ilícito), este valor se construye a partir de modelos de estimación que combinan fuentes determinísticas y estocásticas.
+
+\subsection{Incertidumbre y Componente Estocástico}
+
+Debido a que el APC incluye datos que no se miden de forma directa y oficial, no puede considerarse un valor determinístico perfecto. Por ello, el análisis requiere el uso de \textbf{Intervalos de Confianza (IC)} para cuantificar el riesgo de error en la medición.
+
+Para cada estimación del APC ($\hat{\theta}$), la base de datos proporciona un límite inferior (\texttt{lower\_ci}) y un límite superior (\texttt{upper\_ci}), definiendo el intervalo para cada observación:
+
+$$IC = [\hat{\theta}_{lower}, \hat{\theta}_{upper}]$$
+
+La diferencia entre el límite superior y el inferior se define como la \textbf{Amplitud del Intervalo} (representada por la variable \texttt{ci\_width}):
+
+$$ci\_width = \hat{\theta}_{upper} - \hat{\theta}_{lower}$$
+
+Esta amplitud es la medida directa de la \textbf{incertidumbre estocástica}. Un valor elevado de \texttt{ci\_width} indica una mayor variabilidad y menor precisión en los datos reportados por ese país, lo cual constituye el núcleo analítico de la presente investigación.
+
+\subsection{Medidas de Tendencia Central y Asimetría}
+
+Para evaluar el comportamiento del consumo a nivel agregado, es fundamental analizar la forma de su distribución. Para ello, se contrastará la \textbf{Media Muestral} ($\bar{x}$) con la \textbf{Mediana} ($\tilde{x}$) de la variable \texttt{alcohol\_liters\_per\_capita}.
+
+* \textbf{Media Muestral:} Representa el centro de gravedad o equilibrio de la distribución de los datos. Matemáticamente, se define como la suma de todos los valores observados dividida entre el tamaño de la muestra (n). Es una medida altamente sensible a valores extremos.
+  $$\bar{x} = \frac{1}{n} \sum_{i=1}^{n} x_i$$
+* \textbf{Mediana:} Es el valor posicional que divide la serie de datos ordenados exactamente en dos partes iguales (50% superior y 50% inferior). A diferencia de la media, es una medida robusta, lo que significa que no se ve afectada por valores atípicos (outliers) de consumo extremo.
+
+La relación entre ambas medidas permite identificar sesgos distribucionales. Si $\bar{x} > \tilde{x}$, existe una asimetría positiva, lo que indicaría que un grupo reducido de países con consumos extremos eleva el promedio general, alejándolo del comportamiento típico de la mayoría de las naciones.
+
+\subsection{Criterio de Solapamiento de Intervalos}
+
+Para determinar estocásticamente si el consumo entre dos países, o entre dos años distintos, presenta diferencias estadísticamente significativas, se empleará el análisis del solapamiento de los intervalos de confianza (\texttt{lower\_ci} y \texttt{upper\_ci}).
+
+Se establecen los siguientes criterios:
+\begin{itemize}
+    \item Existe una \textbf{diferencia significativa} si el límite superior de la estimación de un grupo $A$ es estrictamente menor al límite inferior de la estimación de un grupo $B$ ($Upper\_CI_A < Lower\_CI_B$).
+    \item Existe \textbf{solapamiento} si los intervalos comparten un rango de valores. En este escenario, la diferencia observada en los estimadores puntuales (el APC) podría deberse puramente a la variabilidad aleatoria y a la falta de precisión inherente a los datos que no se miden, impidiendo concluir con certeza que una población consume más que otra.
+\end{itemize}
+
+\subsection{Robustez Estadística}
+
+En el análisis de datos sobre consumo de alcohol, la \textbf{robustez} se define como la propiedad de un estadístico de permanecer inalterado o mínimamente afectado ante la presencia de valores atípicos (\textit{outliers}) o errores de medida en la muestra. 
+
+En esta investigación, la robustez es el criterio principal para preferir la \textbf{Mediana} sobre la \textbf{Media Muestral} al momento de describir el comportamiento típico de una región. Mientras que la media se desplaza hacia los extremos cuando existen países con consumos desproporcionadamente altos, la mediana mantiene su posición central, proporcionando una visión más estable del fenómeno ante la incertidumbre de los datos.
+
+\subsection{Sesgo de Información y Variabilidad}
+
+El sesgo en este contexto se refiere a la distorsión de la medida central respecto a la realidad de la mayoría de la población. Dado que el dataset incluye el componente de incertidumbre (\texttt{ci\_width}), es necesario definir dos conceptos clave para el análisis de resultados:
+
+\begin{enumerate}
+    \item \textbf{Sesgo por Valores Extremos:} Se identifica mediante la diferencia entre la media y la mediana ($Sesgo = \bar{x} - \tilde{x}$). Un valor positivo indica que el promedio está "inflado" por países con registros inusualmente altos.
+    \item \textbf{Variabilidad de la Estimación:} Es el grado de dispersión representado por el ancho del intervalo de confianza. A mayor variabilidad, menor es la confiabilidad de la media como indicador único de riesgo para el diseño de políticas públicas.
+\end{enumerate}\
+
+\chapter{Marco Metódico}
+En esta sección se presentan las metodologías, procedimientos algorítmicos y pruebas estadísticas implementadas para validar las hipótesis planteadas en el capítulo anterior. Se detalla el tratamiento de la fuente de datos `alcohol_data.csv`, las técnicas de limpieza de datos (Data Wrangling) y los métodos de comparación de intervalos utilizados para determinar la significancia estadística de las variaciones en el consumo.
+
+Un aspecto fundamental de este diseño es la estratificación de los datos por regiones geográficas, lo que permite identificar patrones de consumo y niveles de incertidumbre diferenciados. Asimismo, con el objetivo de garantizar la estabilidad de las comparaciones y evitar sesgos coyunturales derivados de la crisis sanitaria global, la investigación toma como ventana de observación los últimos cinco años previos al fenómeno de la pandemia (2015-2019). Esta delimitación temporal permite analizar el comportamiento del APC en un contexto de normalidad socioeconómica, asegurando que la incertidumbre detectada responda a deficiencias estructurales en los registros y no a las alteraciones atípicas en el consumo y la vigilancia epidemiológica ocurridas durante el periodo del COVID-19. 
+
+El análisis se ha realizado utilizando el lenguaje de programación R bajo el entorno de desarrollo RStudio, empleando el paradigma “Tidyverse” para la manipulación eficiente de datos y la librería “ggplot2” para la visualización de los intervalos de confianza, facilitando así el estudio del comportamiento estocástico del consumo de alcohol a nivel regional y global.De igual manera se utilizara el lenguaje Python, mediante la librería Streamlit, para el desarrollo de un dashboard interactivo. Esta herramienta permite la visualización dinámica de los intervalos de confianza y el consumo por regiones, facilitando así el estudio del comportamiento de los datos. 
+
+\section{Bases metódicas utilizadas en el trabajo de investigación}
+
+ La presente investigación es de tipo descriptiva. Su objetivo central es caracterizar el fenómeno del consumo de alcohol per cápita y, fundamentalmente, describir la evolución de la incertidumbre técnica asociada a estos reportes globales entre los años 2015 y 2019. No se busca establecer relaciones de causa y efecto, sino realizar una "radiografía" precisa de la consistencia de los datos a través del análisis de medidas de tendencia central (media) y dispersión (desviación estándar, ancho del intervalo de confianza `ci\_width`).
+
+
+El diseño de la investigación es longitudinal, específicamente un análisis de datos de panel. Esto se debe a que se analizan las mismas variables (consumo e incertidumbre) para las mismas unidades de observación (países) a lo largo de un periodo de tiempo continuo (2015-2019). Este diseño permite observar no solo el estado actual, sino los cambios y la evolución temporal de la precisión en los reportes de salud pública.
+
+
+Dado que la investigación se basa exclusivamente en el análisis de una base de datos preexistente (`alcohol\_data.csv`), se clasifica como una investigación documental o basada en fuentes secundarias. No hubo recolección directa de datos primarios en campo; el trabajo consistió en el procesamiento, limpieza y análisis estadístico de información ya recopilada y validada por una autoridad global.
+
+
+En esta sección se detallan los procedimientos algorítmicos y las técnicas estadísticas que constituyen el sustento operativo de la investigación, ejecutados secuencialmente para alcanzar los objetivos planteados \
+
+\subsection{Procedimiento de Data Wrangling (Procesamiento de Datos)}
+
+El tratamiento de la fuente de datos `alcohol\_data.csv` se realizó siguiendo el paradigma "Tidyverse" en R, estructurado en las siguientes fases operativas:
+
+1.  **Carga y Validación de Estructura:** Importación del conjunto de datos y verificación de tipos de variables (categóricas y numéricas continua/entera) mediante las funciones `read.csv()` y `str()`.
+2.  **Delimitación Poblacional y Temporal:** Implementación de filtros algorítmicos con la función `filter()` de la librería `dplyr` para seleccionar exclusivamente los registros de "Both sexes" (Ambos sexos) y acotar el análisis a la ventana de observación efectiva (2015-2019).
+3.  **Selección de Atributos:** Uso de `select()` para conservar únicamente las variables críticas para el estudio: `country`, `iso3`, `year`, `alcohol\_liters\_per\_capita`, `lower\_ci`, `upper\_ci` y `ci\_width`.
+4.  **Estratificación Geográfica (Creación de Variable Derivada):** Desarrollo de un algoritmo de recodificación (mediante `mutate()` y `case_when()`) para asignar a cada país su respectiva región geográfica (ej: "África", "Américas", "Sureste Asiático", "Europa", "Mediterráneo Oriental", "Pacífico Occidental"), conveniente para el estudio.\
+
+```{r formato para las tablas , include=FALSE}
+
+# Configuración de estilo global para tablas
+options(knitr.table.format = "latex") 
+
+# estilo visual solicitado
+aplicar_estilo_tabla <- function(df, caption_text) {
+  df %>%
+    kable(
+      booktabs = TRUE, 
+      escape = FALSE,
+      longtable = TRUE,
+      caption = caption_text,
+      align = "c",
+      col.names = gsub("_", " ", names(df)) %>% str_to_title()
+    ) %>%
+    kable_styling(
+      latex_options = c("striped", "hold_position", "repeat_header"),
+      full_width = FALSE,
+      stripe_color = "#EBF5FB" # Azul muy tenue para filas
+    ) %>%
+    row_spec(0, bold = TRUE, color = "white", background = "#2E86C1") %>% # Encabezado Azul
+    column_spec(1, bold = TRUE)
+}
+```
+
+```{r data-wrangling, echo=FALSE, message=FALSE, warning=FALSE}
+
+#carga de la data
+raw_data_alcohol <- read_csv("alcohol_data.csv", show_col_types = FALSE)
+
+#Definición de Regiones (Modularización para evitar repetición)
+# Creamos un vector nombrado para facilitar la recodificación
+paises_alc <- c("ATG", "ARG", "BHS", "BRB", "BLZ", "BOL", "BRA", "CHL", "COL", "CRI", "CUB", "DMA", "DOM", "ECU", "SLV", "GRD", "GTM", "GUY", "HTI", "HND", "JAM", "MEX", "NIC", "PAN", "PRY", "PER", "KNA", "LCA", "VCT", "SUR", "TTO", "URY", "VEN")
+paises_norte <- c("CAN", "USA")
+paises_asia <- c("AFG", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "COK", "CYP", "PRK", "EGY", "FJI", "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KGZ", "KIR", "KWT", "LAO", "LBN", "MYS", "MDV", "MHL", "FSM", "MNG", "MMR", "NRU", "NPL", "NZL", "NIU", "OMN", "PAK", "PLW", "PNG", "PHL", "QAT", "KOR", "WSM", "SAU", "SGP", "SLB", "LKA", "SYR", "TJK", "THA", "TLS", "TON", "TUR", "TKM", "TUV", "ARE", "UZB", "VUT", "VNM", "YEM")
+paises_europa <- c("ALB", "AND", "ARM", "AUT", "AZE", "BLR", "BEL", "BIH", "BGR", "HRV", "CZE", "DNK", "EST", "FIN", "FRA", "GEO", "DEU", "GRC", "HUN", "ISL", "IRL", "ITA", "LVA", "LTU", "LUX", "MLT", "MCO", "MNE", "NLD", "MKD", "NOR", "POL", "PRT", "MDA", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "UKR", "GBR")
+paises_africa <- c("DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG", "CIV", "COD", "DJI", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB", "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM", "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "TGO", "TUN", "UGA", "TZA", "ZMB", "ZWE")
+
+#Procesamiento
+clean_data_alcohol <- raw_data_alcohol %>%
+  filter(sex == "Both sexes", year %in% 2015:2019) %>%
+  select(country, iso3, year, alcohol_liters_per_capita, lower_ci, upper_ci, ci_width) %>%
+  drop_na(alcohol_liters_per_capita, ci_width) %>%
+  mutate(
+    Region = case_when(
+      iso3 %in% paises_alc    ~ "América Latina y el Caribe",
+      iso3 %in% paises_norte  ~ "América del Norte",
+      iso3 %in% paises_asia   ~ "Asia",
+      iso3 %in% paises_europa ~ "Europa",
+      iso3 %in% paises_africa ~ "África",
+      TRUE                    ~ "Otras/Oceanía"
+    ),
+    across(c(country, iso3, year, Region), as.factor)
+  )
+
+#imprimimos las dimensiones del data frame limpio y las primeras filas
+ print(paste("Registros válidos (Ambos sexos, 2015-2019):", nrow(clean_data_alcohol)))
+print("Estructura final de los datos procesados y estratificados (str):")
+str(clean_data_alcohol)
+head(clean_data_alcohol %>% select(country, iso3, year, Region)) 
+```
+
+\subsection{Análisis Comparativo del Impacto de la Limpieza de Datos (ETL)}
+
+En concordancia con el **Objetivo 1** de la investigación, y siguiendo la rigurosidad metodológica de estudios descriptivos previos, se realizó un análisis comparativo para evaluar estadísticamente el impacto del proceso de Extracción, Transformación y Carga (ETL) sobre el conjunto de datos. No se debe proceder a la eliminación ciega de registros sin comprender la naturaleza y el sesgo potencial que esto introduce en la muestra final.
+
+El procedimiento metodológico consistió en:
+
+1.  **Cuantificación de Pérdida de Registros:** Se comparó el número de observaciones nativas (`raw\_data\_alcohol`) con el número de observaciones en el data frame depurado (`clean\_data\_alcohol`), determinando el porcentaje de datos perdidos durante la limpieza.
+
+2.  **Análisis de Tendencia Central (Pre vs. Post Limpieza):** Se calcularon las medidas de tendencia central robustas (media aritmética y mediana) para la variable principal de consumo (`alcohol\_liters\_per\_capita`) tanto en la base de datos nativa como en la limpia.
+
+3.  **Evaluación de Sesgo:** La comparación de la media y la mediana pre y post limpieza permite identificar si la eliminación de registros con valores nulos (`NA`) generó un cambio significativo en el promedio reportado, sugiriendo un sesgo sistemático en la recolección o reporte de datos a nivel global.
+
+```{r comparativo-etl}
+
+# Análisis de impacto metodológico
+n_inicial <- raw_data_alcohol %>% filter(sex == "Both sexes", year %in% 2015:2019) %>% nrow()
+n_final   <- nrow(clean_data_alcohol)
+
+tendencia_pre <- raw_data_alcohol %>%
+  filter(sex == "Both sexes", year %in% 2015:2019) %>%
+  summarize(
+    Estado = "Original (Pre-Limpieza)",
+    Muestra = n(),
+    Media = mean(alcohol_liters_per_capita, na.rm = TRUE),
+    Mediana = median(alcohol_liters_per_capita, na.rm = TRUE)
+  )
+
+tendencia_post <- clean_data_alcohol %>%
+  summarize(
+    Estado = "Depurado (Post-Limpieza)",
+    Muestra = n(),
+    Media = mean(alcohol_liters_per_capita),
+    Mediana = median(alcohol_liters_per_capita)
+  )
+
+tabla_etl <- bind_rows(tendencia_pre, tendencia_post) %>%
+  mutate(Sesgo_Absoluto = Media - Mediana)
+
+aplicar_estilo_tabla(tabla_etl, "Comparación post-limpieza de los datos")
+``` 
+
+\subsubsection{Simulación de Fallos y Validación del Protocolo ETL}
+
+Debido a la alta integridad de la fuente secundaria en el periodo 2015-2019, se realizó un experimento de control para validar la capacidad de respuesta del protocolo de limpieza. Este procedimiento consistió en inyectar artificialmente un 10% de ruido (valores NA) en una réplica de la muestra original.
+
+El objetivo es demostrar, mediante una prueba de estrés, que el algoritmo de depuración identifica y elimina correctamente las inconsistencias, garantizando que los resultados finales de la investigación no se vean alterados por fallos en el reporte de origen.\
+
+```{r fase-ensuciado de la data}
+
+set.seed(123)
+muestra_sucia <- clean_data_alcohol %>%
+  mutate(
+    alcohol_liters_per_capita = if_else(runif(n()) < 0.10, NA_real_, alcohol_liters_per_capita),
+    ci_width = if_else(runif(n()) < 0.05, NA_real_, ci_width)
+  )
+
+validación_algoritmo <- data.frame(
+  Fase = c("Muestra Contaminada", "Muestra Recuperada"),
+  N_Total = c(nrow(muestra_sucia), nrow(muestra_sucia %>% drop_na(alcohol_liters_per_capita, ci_width))),
+  Valores_NA = c(sum(is.na(muestra_sucia$alcohol_liters_per_capita)), 0)
+)
+
+aplicar_estilo_tabla(validación_algoritmo, "Prueba de Estrés: Validación del Algoritmo de Depuración")
+```
+
+\subsubsection{Protocolo de Recuperación (ETL)}
+
+Una vez generada la muestra con inconsistencias, se aplicó el algoritmo de depuración definido en el Objetivo 1. El proceso consiste en la identificación y eliminación automática de las filas contaminadas, garantizando que la base de datos resultante sea apta para el cálculo de solapamientos de intervalos de confianza.
+
+```{r dataset-final, echo=FALSE, message=FALSE, warning=FALSE}
+
+muestra_recuperada <- muestra_sucia %>%
+  drop_na(alcohol_liters_per_capita, ci_width)
+
+comparacion_recuperacion <- data.frame(
+  Estado = c("Muestra Contaminada", "Muestra Recuperada"),
+ `Registros Totales` = c(nrow(muestra_sucia), nrow(muestra_recuperada)),
+ `Valores NA Restantes` = c(sum(is.na(muestra_sucia$alcohol_liters_per_capita) | is.na(muestra_sucia$ci_width)), 0),
+  `Consumo Medio` = c(mean(muestra_sucia$alcohol_liters_per_capita, na.rm=TRUE), 
+                      mean(muestra_recuperada$alcohol_liters_per_capita))
+)
+
+aplicar_estilo_tabla(validación_algoritmo, "Validación de la eficacia del algoritmo de limpieza de datos")
+```
+
+\subsection{Análisis Descriptivo y de Tendencia Central}
+
+Una vez validada la integridad del protocolo de procesamiento mediante la prueba de estrés, se procedió a la ejecución del Análisis Descriptivo y de Tendencia Central sobre la muestra definitiva (2015-2019). Esta fase es fundamental para establecer la línea base comparativa de la investigación, permitiendo transformar los microdatos nacionales en métricas agregadas que caracterizan el comportamiento del consumo y su precisión técnica a nivel global.
+
+El tratamiento estadístico se centró en la reducción de datos para obtener la Media Aritmética (APC) y la Desviación Estándar, junto con el análisis del Ancho del Intervalo de Confianza (ci_width) como métrica de calidad.\
+
+```{r analisis-descriptivo-final}
+
+# Consolidación de métricas finales
+resumen_regional <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Consumo_Medio = mean(alcohol_liters_per_capita),
+    Mediana_Consumo = median(alcohol_liters_per_capita),
+    Desviación_Std = sd(alcohol_liters_per_capita),
+    Incertidumbre_Promedio = mean(ci_width),
+    .groups = 'drop'
+  ) %>%
+  arrange(desc(Consumo_Medio))
+
+# Añadir fila de Total Global con manejo estadístico correcto
+total_global <- clean_data_alcohol %>%
+  summarise(
+    Region = "TOTAL GLOBAL",
+    Consumo_Medio = mean(alcohol_liters_per_capita),
+    Mediana_Consumo = median(alcohol_liters_per_capita),
+    Desviación_Std = sd(alcohol_liters_per_capita),
+    Incertidumbre_Promedio = mean(ci_width)
+  )
+
+tabla_maestra <- bind_rows(resumen_regional, total_global)
+
+aplicar_estilo_tabla(tabla_maestra, "Métricas de Tendencia Central y Calidad de Datos por Macro-Región")
+```
+
+\subsubsection{Evaluación de la media frente a la mediana}
+
+Debido a la naturaleza heterogénea del consumo de alcohol a nivel global, se incorporó un análisis de robustez comparando la Media Aritmética frente a la Mediana por cada macro-región. Este procedimiento tiene como objetivo detectar posibles sesgos causados por valores atípicos `(outliers)` países con consumos excepcionalmente altos o bajos— que pudieran desplazar el promedio y, por ende, distorsionar la interpretación del ancho de los intervalos de confianza `(ci_width)`.
+
+Una divergencia mínima entre ambas medidas (Sesgo Relativo < 10%) validará el uso de la media como estimador central representativo para la posterior comparación de intervalos. Para este cálculo se utilizó el siguiente algoritmo:\
+
+```{r calculo-robustez-central}
+
+# Cálculo de indicadores de asimetría para validar la tendencia central
+analisis_robustez <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Media = mean(alcohol_liters_per_capita),
+    Mediana = median(alcohol_liters_per_capita),
+    # Calculamos la diferencia porcentual para medir el sesgo
+    Sesgo_Relativo_Pct = ((Media - Mediana) / Mediana) * 100,
+    .groups = 'drop'
+  )
+
+ # Tabla para el informe
+aplicar_estilo_tabla(tabla_maestra, "Contraste entre la media y la meidana")
+```
+
+
+\subsubsection{Técnica de Comparación de Intervalos de Confianza y Regla de Decisión para el Consumo Regional}
+
+Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las pruebas paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:\
+
+```{r comparacion-intervalos-regional, echo=FALSE, message=FALSE, warning=FALSE}
+
+# Preparación de datos para visualización técnica
+data_plot <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Media = mean(alcohol_liters_per_capita),
+    LI = mean(lower_ci),
+    LS = mean(upper_ci)
+  )
+
+ggplot(data_plot, aes(x = reorder(Region, Media), y = Media)) +
+  geom_errorbar(aes(ymin = LI, ymax = LS), width = 0.2, color = "#2E86C1", size = 1) +
+  geom_point(size = 3, color = "#1B4F72") +
+  coord_flip() +
+  labs(
+    title = "Inferencia Visual: Consumo de Alcohol por Región (2015-2019)",
+    subtitle = "Intervalos de Confianza (95%) Agregados",
+    x = "Macro-Región", y = "Litros de Alcohol Puro APC",
+    caption = "Fuente: Análisis basado en alcohol_data.csv"
+  ) +
+  theme_minimal(base_size = 12) +
+  theme(panel.grid.minor = element_blank())
+``` 
+
+\chapter{Análisis de Resultados}
+
+{\small Este capítulo presenta los resultados obtenidos al aplicar las metodologías descritas en el capítulo anterior, así como del análisis estadístico descriptivo de las variables estudiadas y las ventajas y desventajas al aplicar dichos tests.}
+
+\section{Presentación de resultados 1}
+
+Descripción\
+
+\section{Presentación de resultados 2}
+
+Descripción\
+
+\section{Presentación de resultados n}
+
+Descripción\
+
+\chapter{Conclusiones y Recomendaciones}
+
+\textbf{1.-} Conclusion 1 del trabajo de investigación.\
+
+\textbf{Recomendación} 
+Recomendación 1 del trabajo de investigación.\
+
+\textbf{2.-} Conclusion 2 del trabajo de investigación.\
+
+\textbf{Recomendación} 
+Recomendación 2 del trabajo de investigación.\
+
+\textbf{n.-} Conclusion n del trabajo de investigación.\
+
+\textbf{Recomendación} Recomendación n del trabajo de investigación.\
+
+\appendix
+\renewcommand{\thechapter}{\Alph{chapter}}
+
+\chapter{Anexo A}
+
+\chapter{Anexo B}
+
+\chapter{Anexo C}
+
