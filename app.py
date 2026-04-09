@@ -3,90 +3,144 @@ import pandas as pd
 import plotly.express as px
 
 # Configuración de la Página de Streamlit
-st.set_page_config(
-    page_title="Dashboard de Consumo de Alcohol a nivel mundial",page_icon="🍷",layout="wide")
-st.title("🍷 Dashboard de Consumo de Alcohol a nivel mundial"),
-st.markdown("Dashboard interactivo para analizar el consumo de alcohol a nivel mundial, con filtros por idioma y visualizaciones dinámicas.")
-# Definición de las Paletas de Colores
-PALETTE_ALCOHOL_CONSUMPTION = ["#ce7437", "#7f61bc", "#fae208", "#b9baff", "#F0F0F0", "#000000"]
-PALETTE_COLOURS = ["#6441a5", "#26C6DA", "#FF1493", "#00FF73", "#FF0000"]
-PRIMARY_COLOR = PALETTE_COLOURS[0]
 
+st.set_page_config(
+    page_title="Dashboard de Consumo de Alcohol por Regiones",
+    layout="wide",
+    initial_sidebar_state="expanded"
+)
+
+PALETA_PRINCIPAL = ["#1a6b3c", "#2d9e6b", "#4cc38a", "#90dbb5", "#d4f0e3"]
+COLOR_BASE = PALETA_PRINCIPAL[0]
 
 # Carga de Datos
+DATA_URL = "https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/main/alcohol_data.csv"
+ANIOS_ANALISIS = (2015, 2019)
+
+# Ordenamiento de la Data por regiones 
+REGION_MAP = {
+    "América Latina y el Caribe": [
+        "ATG", "ARG", "BHS", "BRB", "BLZ", "BOL", "BRA", "CHL", "COL", "CRI", "CUB", "DMA",
+        "DOM", "ECU", "SLV", "GRD", "GTM", "GUY", "HTI", "HND", "JAM", "MEX", "NIC", "PAN",
+        "PRY", "PER", "KNA", "LCA", "VCT", "SUR", "TTO", "URY", "VEN"
+    ],
+    "América del Norte": ["CAN", "USA"],
+    "Asia": [
+        "AFG", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "COK", "CYP", "PRK", "EGY", "FJI",
+        "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KGZ", "KIR", "KWT", "LAO",
+        "LBN", "MYS", "MDV", "MHL", "FSM", "MNG", "MMR", "NRU", "NPL", "NZL", "NIU", "OMN",
+        "PAK", "PLW", "PNG", "PHL", "QAT", "KOR", "WSM", "SAU", "SGP", "SLB", "LKA", "SYR",
+        "TJK", "THA", "TLS", "TON", "TUR", "TKM", "TUV", "ARE", "UZB", "VUT", "VNM", "YEM"
+    ],
+    "Europa": [
+        "ALB", "AND", "ARM", "AUT", "AZE", "BLR", "BEL", "BIH", "BGR", "HRV", "CZE", "DNK",
+        "EST", "FIN", "FRA", "GEO", "DEU", "GRC", "HUN", "ISL", "IRL", "ISR", "ITA", "KAZ",
+        "KGZ", "LVA", "LTU", "LUX", "MLT", "MCO", "MNE", "NLD", "MKD", "NOR", "POL", "PRT",
+        "MDA", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "TJK", "TUR",
+        "TKM", "UKR", "GBR", "UZB"
+    ],
+    "África": [
+        "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG",
+        "CIV", "COD", "DJI", "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB",
+        "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM",
+        "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "SYR",
+        "TGO", "TUN", "UGA", "TZA", "ZMB", "ZWE"
+    ]
+}
+
+REGION_ORDER = [
+    "América Latina y el Caribe",
+    "América del Norte",
+    "Asia",
+    "Europa",
+    "África"
+]
+
+SECCIONES = [
+    "Resumen general",
+    "Países por región",
+    "Comparación entre regiones",
+    "Comparación dentro de una región",
+    "Ranking de países",
+    "Mapa mundial",
+    "Explorador de datos"
+]
+
+# Funciones para cargar y procesar los datos
+ 
+def asignar_region(iso3: str) -> str:
+    """Asigna una región según el orden definido por el usuario."""
+    if pd.isna(iso3):
+        return "Otras / Sin clasificar"
+
+    for region in REGION_ORDER:
+        if iso3 in REGION_MAP[region]:
+            return region
+    return "Otras / Sin clasificar"
+
+# Carga y ordenamiento de los datos
 @st.cache_data
-def load_and_clean_data(url):
+def cargar_y_preparar_datos(url: str) -> pd.DataFrame:
+    """Carga la base, normaliza columnas y deja lista la data para el dashboard."""
     df = pd.read_csv(url)
 
-    # Normalizar nombres de columnas a mayúsculas y quitar espacios extra
-    df.columns = df.columns.str.strip().str.upper().str.replace(' ', '_')
+    df.columns = (
+        df.columns
+        .str.strip()
+        .str.upper()
+        .str.replace(" ", "_", regex=False)
+    )
 
-    # *** AJUSTE CLAVE: Normalizar el contenido de la columna LANGUAGE a mayúsculas ***
-    if 'LANGUAGE' in df.columns:
-        df['LANGUAGE'] = df['LANGUAGE'].str.upper()
+    columnas_numericas = [
+        "YEAR", "ALCOHOL_LITERS_PER_CAPITA", "LOWER_CI", "UPPER_CI", "CI_WIDTH"
+    ]
+    for col in columnas_numericas:
+        if col in df.columns:
+            df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    # Lógica de limpieza: buscar columna 'lower_ci' y reemplazar 0.0 por la moda de esa columna
-    possible_cols = ['lower_ci', 'lower ci']
-    target_col = None
+    if "COUNTRY" in df.columns:
+        df["COUNTRY"] = df["COUNTRY"].astype(str).str.strip()
 
-    for col in possible_cols:
-        normalized = col.upper().replace(' ', '_')
-        if normalized in df.columns:
-            target_col = normalized
-            break
+    if "SEX" in df.columns:
+        df["SEX"] = df["SEX"].astype(str).str.strip().str.title()
 
-    if target_col:
-        try:
-            moda_lower_ci = df[target_col].mode()[0]
+    if "ISO3" in df.columns:
+        df["ISO3"] = df["ISO3"].astype(str).str.strip().str.upper()
 
+    df = df[df["YEAR"].between(ANIOS_ANALISIS[0], ANIOS_ANALISIS[1])].copy()
+    df["REGION"] = df["ISO3"].apply(asignar_region)
+    df = df[df["REGION"].isin(REGION_ORDER)].copy()
 
-
-
-
-
-            df.loc[df[target_col] == 0.0, target_col] = moda_lower_ci
-        except IndexError:
-            df.loc[df[target_col] == 0.0, target_col] = 'No data'
+    for col in ["LOWER_CI", "UPPER_CI", "CI_WIDTH"]:
+        if col in df.columns:
+            df[col] = df[col].fillna(df[col].median())
 
     return df
 
 
-# Función Principal de la Aplicación
-def main():
-    # Cargar los datos. Si falla, se muestra el error y la app se detiene.
-    try:
-        data_limpia = load_and_clean_data("https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/andrea-dev/15.%20Alcohol%20consumption.csv")
-        st.sidebar.success("✅ Datos cargados con éxito.")
+def tabla_formateada(df: pd.DataFrame, columnas_decimales=None):
+    """Aplica formato simple para mostrar tablas de forma más limpia."""
+    columnas_decimales = columnas_decimales or []
+    formato = {col: "{:.2f}" for col in columnas_decimales if col in df.columns}
+    return df.style.format(formato)
 
-    except FileNotFoundError:
-        st.error("🔴 Error: Asegúrate de que el archivo 'https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/andrea-dev/15.%20Alcohol%20consumption.csv' esté en la misma carpeta que 'app.py'.")
-        return
-    except Exception as e:
-        st.error(f"🔴 Error inesperado durante la carga o limpieza de datos: {e}")
-        return
 
-    # --- 1. Generar Sidebar y Filtros ---
-    st.sidebar.header("Filtros Globales")
+def construir_filtros(data: pd.DataFrame):
+    """Centraliza los filtros globales y la navegación por secciones."""
+    st.sidebar.header("Navegación y filtros")
 
-    # Las opciones únicas ya estarán en mayúsculas gracias al cambio en load_and_clean_data
-    language_options = data_limpia['LANGUAGE'].unique()
-
-    # Usamos ENGLISH y SPANISH como default, que ahora coincidirán con las opciones.
-    default_languages = [lang for lang in ["ENGLISH", "SPANISH"] if lang in language_options]
-
-    selected_language = st.sidebar.multiselect(
-        "Seleccionar Idioma(s) para el Análisis Detallado",
-        options=language_options,
-        default=default_languages
+    seccion_activa = st.sidebar.radio(
+        "Sección del dashboard",
+        options=SECCIONES,
+        index=0
     )
 
-    # Filtro general aplicado al DataFrame
-    if selected_language:
-        df_filtered_lang = data_limpia[data_limpia['LANGUAGE'].isin(selected_language)]
-    else:
-        df_filtered_lang = pd.DataFrame()
+    sex_options = sorted(data["SEX"].dropna().unique().tolist())
+    default_sex = ["Both Sexes"] if "Both Sexes" in sex_options else sex_options[:1]
+    selected_sex = st.sidebar.multiselect(
+        "Sexo",
+        options=sex_options,
+        default=default_sex
+    )
 
-        # --- 2. Layout del Dashboard (Títulos Fijos) ---
-    st.title("📊 Análisis Comparativo del Consumo de Alcohol a nivel mundial")
-    st.markdown("---")
-
+        # --- 2. Layout del Dashboard (Títulos Fijos) --
