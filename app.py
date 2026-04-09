@@ -6,6 +6,14 @@ import plotly.express as px
 
 st.set_page_config(
     page_title="Dashboard de Consumo de Alcohol por Regiones",
+
+# Configuración de la Página de Streamlit
+
+st.set_page_config(
+    page_title="Dashboard de Consumo de Alcohol por Regiones",
+st.set_page_config(
+    page_title="Dashboard Consumo de Alcohol en el Mundo (2000-2022)",
+
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -230,3 +238,14 @@ def mostrar_paises_por_region(df_filtered: pd.DataFrame):
     with c2:
         st.markdown("### Tabla ordenada por región y país")
         st.dataframe(tabla_regiones, use_container_width=True, height=420)
+
+        # --- 2. Layout del Dashboard (Títulos Fijos) --
+# Definición de las Paletas de Colores
+PALETTE_WORLD = ["#1a6b3c", "#2d9e6b", "#4cc38a", "#90dbb5", "#d4f0e3", "#000000"]
+PALETTE_COLOURS = ["#1a6b3c", "#e07b39", "#3a7ebf", "#c94040", "#8e44ad"]
+PRIMARY_COLOR = PALETTE_COLOURS[0]
+
+DATA_URL = (
+    "https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/andrea-dev/dataset/alcohol_data.csv"
+)
+
