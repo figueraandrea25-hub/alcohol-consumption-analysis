@@ -37,51 +37,11 @@
 \providecommand{\degreedate}[1]{\def\lafecha{#1}}
 
 % --- Configuración para bloques de código de R (Pandoc) ---
-\usepackage{color}
-\usepackage{fancyvrb}
-\newcommand{\VerbBar}{|}
-\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
-\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
-% Add ',fontsize=\small' for more characters per line
-\usepackage{framed}
-\definecolor{shadecolor}{RGB}{248,248,248}
-\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
-\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
-\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
-\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\BuiltInTok}[1]{#1}
-\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
-\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
-\newcommand{\ExtensionTok}[1]{#1}
-\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
-\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\ImportTok}[1]{#1}
-\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
-\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
-\newcommand{\NormalTok}[1]{#1}
-\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
-\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
-\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
-\newcommand{\RegionMarkerTok}[1]{#1}
-\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
-\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
-\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                         DATOS (Conectados a RMarkdown)                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\title{El Consumo de alcohol per capital y los datos que no se miden}
+\title{El Consumo de alcohol per cápita y los datos que no se miden}
 \author{Andrea Figuera \\ Eduardo Espinoza}
 
 % Lógica para Facultad: Si la defines en el YAML la usa, si no, usa la default
@@ -110,6 +70,38 @@ Estadistica y Ciencias Actuariales}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                   DOCUMENTO                       %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% --- PARCHE PARA LISTAS Y TABLAS (Agregado para Andrea y Eduardo) ---
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{float}
+\usepackage{colortbl}
+\usepackage{pdflscape}
+\usepackage{tabu}
+\usepackage{threeparttable}
+\usepackage{threeparttablex}
+\usepackage[normalem]{ulem}
+\usepackage{makecell}
+\usepackage{xcolor}
+% --------------------------------------------------------------------
 \begin{document}
 
 \maketitle
@@ -687,8 +679,7 @@ alcohol a nivel regional y global.De igual manera se utilizara el
 lenguaje Python, mediante la librería Streamlit, para el desarrollo de
 un dashboard interactivo. Esta herramienta permite la visualización
 dinámica de los intervalos de confianza y el consumo por regiones,
-facilitando así el estudio del comportamiento de los datos. esto es lo
-que tengo el marco metodico y luego debo poner las bases metodicas
+facilitando así el estudio del comportamiento de los datos.
 
 \section{Bases metódicas utilizadas en el trabajo de investigación}
 
@@ -759,148 +750,264 @@ operativas:
   Occidental''), conveniente para el estudio.\\
 \end{enumerate}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{library}\NormalTok{(tidyverse)}
-\FunctionTok{library}\NormalTok{(knitr)}
+\subsection{Análisis Comparativo del Impacto de la Limpieza de Datos (ETL)}
 
-\NormalTok{raw\_data\_alcohol }\OtherTok{\textless{}{-}} \FunctionTok{read.csv}\NormalTok{(}\StringTok{"alcohol\_data.csv"}\NormalTok{) }\CommentTok{\#Importación del conjunto de datos crudos}
+En concordancia con el \textbf{Objetivo 1} de la investigación, y
+siguiendo la rigurosidad metodológica de estudios descriptivos previos,
+se realizó un análisis comparativo para evaluar estadísticamente el
+impacto del proceso de Extracción, Transformación y Carga (ETL) sobre el
+conjunto de datos. No se debe proceder a la eliminación ciega de
+registros sin comprender la naturaleza y el sesgo potencial que esto
+introduce en la muestra final.
 
-\FunctionTok{print}\NormalTok{(}\StringTok{"Estructura inicial de los datos crudos:"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+El procedimiento metodológico consistió en:
 
-\begin{verbatim}
-## [1] "Estructura inicial de los datos crudos:"
-\end{verbatim}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Cuantificación de Pérdida de Registros:} Se comparó el número
+  de observaciones nativas
+  (\texttt{raw\textbackslash{}\_data\textbackslash{}\_alcohol}) con el
+  número de observaciones en el data frame depurado
+  (\texttt{clean\textbackslash{}\_data\textbackslash{}\_alcohol}),
+  determinando el porcentaje de datos perdidos durante la limpieza.
+\item
+  \textbf{Análisis de Tendencia Central (Pre vs.~Post Limpieza):} Se
+  calcularon las medidas de tendencia central robustas (media aritmética
+  y mediana) para la variable principal de consumo
+  (\texttt{alcohol\textbackslash{}\_liters\textbackslash{}\_per\textbackslash{}\_capita})
+  tanto en la base de datos nativa como en la limpia.
+\item
+  \textbf{Evaluación de Sesgo:} La comparación de la media y la mediana
+  pre y post limpieza permite identificar si la eliminación de registros
+  con valores nulos (\texttt{NA}) generó un cambio significativo en el
+  promedio reportado, sugiriendo un sesgo sistemático en la recolección
+  o reporte de datos a nivel global.
+\end{enumerate}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{str}\NormalTok{(raw\_data\_alcohol) }\CommentTok{\# Verificación inicial de la estructura y tipos de variables}
-\end{Highlighting}
-\end{Shaded}
+\begin{longtable}[t]{>{}ccccc}
+\caption{\label{tab:comparativo-etl}Comparación post-limpieza de los datos}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Estado}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Muestra}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Media}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Sesgo Absoluto}}}\\
+\midrule
+\endfirsthead
+\caption[]{Comparación post-limpieza de los datos \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Estado}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Muestra}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Media}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Sesgo Absoluto}}}\\
+\midrule
+\endhead
 
-\begin{verbatim}
-## 'data.frame':    4324 obs. of  9 variables:
-##  $ country                  : chr  "Italy" "Tanzania, United Republic of" "Cyprus" "Sierra Leone" ...
-##  $ iso3                     : chr  "ITA" "TZA" "CYP" "SLE" ...
-##  $ year                     : int  2003 2006 2017 2019 2017 2007 2018 2005 2000 2009 ...
-##  $ sex                      : chr  "Both sexes" "Both sexes" "Both sexes" "Both sexes" ...
-##  $ alcohol_liters_per_capita: num  9.623 6.338 6.117 0.253 6.024 ...
-##  $ lower_ci                 : num  7.965 4.768 4.627 0.101 4.682 ...
-##  $ upper_ci                 : num  11.389 8.109 7.798 0.567 7.537 ...
-##  $ ci_width                 : num  3.424 3.342 3.171 0.467 2.855 ...
-##  $ IndicatorCode            : chr  "SA_0000001688" "SA_0000001688" "SA_0000001688" "SA_0000001688" ...
-\end{verbatim}
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{Original (Pre-Limpieza)}} & \cellcolor[HTML]{F2D7D5}{940} & \cellcolor[HTML]{F2D7D5}{5.49675} & \cellcolor[HTML]{F2D7D5}{5.011499} & \cellcolor[HTML]{F2D7D5}{0.4852515}\\
+\textbf{Depurado (Post-Limpieza)} & 940 & 5.49675 & 5.011499 & 0.4852515\\*
+\end{longtable}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{\#Procesamiento Encadenado}
-\NormalTok{clean\_data\_alcohol }\OtherTok{\textless{}{-}}\NormalTok{ raw\_data\_alcohol }\SpecialCharTok{\%\textgreater{}\%}
- 
-  \FunctionTok{filter}\NormalTok{(sex }\SpecialCharTok{==} \StringTok{"Both sexes"} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textgreater{}=} \DecValTok{2015} \SpecialCharTok{\&}\NormalTok{ year }\SpecialCharTok{\textless{}=} \DecValTok{2019}\NormalTok{) }\SpecialCharTok{\%\textgreater{}\%}  \CommentTok{\# Seleccionamos exclusivamente "Both sexes" y la ventana 2015{-}2019}
-  
-  \FunctionTok{select}\NormalTok{(country, iso3, year, alcohol\_liters\_per\_capita, }
-\NormalTok{         lower\_ci, upper\_ci, ci\_width) }\SpecialCharTok{\%\textgreater{}\%} \CommentTok{\# Conservamos solo las variables necesarias para el estudio }
-  
-  \CommentTok{\# Gestión de valores faltantes (NA) }
-  \FunctionTok{filter}\NormalTok{(}\SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(alcohol\_liters\_per\_capita) }\SpecialCharTok{\&} \SpecialCharTok{!}\FunctionTok{is.na}\NormalTok{(ci\_width)) }\SpecialCharTok{\%\textgreater{}\%}
-  
-  \CommentTok{\# Recodificación para asignar 5 Macro{-}Regiones \# Incluimos los códigos ISO3 de todos estos países}
-  \FunctionTok{mutate}\NormalTok{(}\AttributeTok{Region =} \FunctionTok{case\_when}\NormalTok{(}
-    
-    \CommentTok{\# América Latina y el Caribe (Población hispanohablante + Brasil)}
-\NormalTok{    iso3 }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"ATG"}\NormalTok{, }\StringTok{"ARG"}\NormalTok{, }\StringTok{"BHS"}\NormalTok{, }\StringTok{"BRB"}\NormalTok{, }\StringTok{"BLZ"}\NormalTok{, }\StringTok{"BOL"}\NormalTok{, }\StringTok{"BRA"}\NormalTok{, }\StringTok{"CHL"}\NormalTok{, }\StringTok{"COL"}\NormalTok{, }\StringTok{"CRI"}\NormalTok{, }\StringTok{"CUB"}\NormalTok{, }\StringTok{"DMA"}\NormalTok{, }\StringTok{"DOM"}\NormalTok{, }\StringTok{"ECU"}\NormalTok{, }\StringTok{"SLV"}\NormalTok{, }\StringTok{"GRD"}\NormalTok{, }\StringTok{"GTM"}\NormalTok{, }\StringTok{"GUY"}\NormalTok{, }\StringTok{"HTI"}\NormalTok{, }\StringTok{"HND"}\NormalTok{, }\StringTok{"JAM"}\NormalTok{, }\StringTok{"MEX"}\NormalTok{, }\StringTok{"NIC"}\NormalTok{, }\StringTok{"PAN"}\NormalTok{, }\StringTok{"PRY"}\NormalTok{, }\StringTok{"PER"}\NormalTok{, }\StringTok{"KNA"}\NormalTok{, }\StringTok{"LCA"}\NormalTok{, }\StringTok{"VCT"}\NormalTok{, }\StringTok{"SUR"}\NormalTok{, }\StringTok{"TTO"}\NormalTok{, }\StringTok{"URY"}\NormalTok{, }\StringTok{"VEN"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"América Latina y el Caribe"}\NormalTok{,}
-    
-    \CommentTok{\# América del Norte (Solo Canadá y USA, ya que México está en ALC)}
-\NormalTok{    iso3 }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"CAN"}\NormalTok{, }\StringTok{"USA"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"América del Norte"}\NormalTok{,}
-    
-    \CommentTok{\# Asia (Sureste Asiático + Pacífico Occidental)}
-\NormalTok{    iso3 }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"AFG"}\NormalTok{, }\StringTok{"BHR"}\NormalTok{, }\StringTok{"BGD"}\NormalTok{, }\StringTok{"BTN"}\NormalTok{, }\StringTok{"BRN"}\NormalTok{, }\StringTok{"KHM"}\NormalTok{, }\StringTok{"CHN"}\NormalTok{, }\StringTok{"COK"}\NormalTok{, }\StringTok{"CYP"}\NormalTok{, }\StringTok{"PRK"}\NormalTok{, }\StringTok{"EGY"}\NormalTok{, }\StringTok{"FJI"}\NormalTok{, }\StringTok{"IND"}\NormalTok{, }\StringTok{"IDN"}\NormalTok{, }\StringTok{"IRN"}\NormalTok{, }\StringTok{"IRQ"}\NormalTok{, }\StringTok{"ISR"}\NormalTok{, }\StringTok{"JPN"}\NormalTok{, }\StringTok{"JOR"}\NormalTok{, }\StringTok{"KAZ"}\NormalTok{, }\StringTok{"KGZ"}\NormalTok{, }\StringTok{"KIR"}\NormalTok{, }\StringTok{"KWT"}\NormalTok{, }\StringTok{"LAO"}\NormalTok{, }\StringTok{"LBN"}\NormalTok{, }\StringTok{"MYS"}\NormalTok{, }\StringTok{"MDV"}\NormalTok{, }\StringTok{"MHL"}\NormalTok{, }\StringTok{"FSM"}\NormalTok{, }\StringTok{"MNG"}\NormalTok{, }\StringTok{"MMR"}\NormalTok{, }\StringTok{"NRU"}\NormalTok{, }\StringTok{"NPL"}\NormalTok{, }\StringTok{"NZL"}\NormalTok{, }\StringTok{"NIU"}\NormalTok{, }\StringTok{"OMN"}\NormalTok{, }\StringTok{"PAK"}\NormalTok{, }\StringTok{"PLW"}\NormalTok{, }\StringTok{"PNG"}\NormalTok{, }\StringTok{"PHL"}\NormalTok{, }\StringTok{"QAT"}\NormalTok{, }\StringTok{"KOR"}\NormalTok{, }\StringTok{"WSM"}\NormalTok{, }\StringTok{"SAU"}\NormalTok{, }\StringTok{"SGP"}\NormalTok{, }\StringTok{"SLB"}\NormalTok{, }\StringTok{"LKA"}\NormalTok{, }\StringTok{"SYR"}\NormalTok{, }\StringTok{"TJK"}\NormalTok{, }\StringTok{"THA"}\NormalTok{, }\StringTok{"TLS"}\NormalTok{, }\StringTok{"TON"}\NormalTok{, }\StringTok{"TUR"}\NormalTok{, }\StringTok{"TKM"}\NormalTok{, }\StringTok{"TUV"}\NormalTok{, }\StringTok{"ARE"}\NormalTok{, }\StringTok{"UZB"}\NormalTok{, }\StringTok{"VUT"}\NormalTok{, }\StringTok{"VNM"}\NormalTok{, }\StringTok{"YEM"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Asia"}\NormalTok{,}
-    
-    \CommentTok{\# Europa }
-\NormalTok{    iso3 }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"ALB"}\NormalTok{, }\StringTok{"AND"}\NormalTok{, }\StringTok{"ARM"}\NormalTok{, }\StringTok{"AUT"}\NormalTok{, }\StringTok{"AZE"}\NormalTok{, }\StringTok{"BLR"}\NormalTok{, }\StringTok{"BEL"}\NormalTok{, }\StringTok{"BIH"}\NormalTok{, }\StringTok{"BGR"}\NormalTok{, }\StringTok{"HRV"}\NormalTok{, }\StringTok{"CZE"}\NormalTok{, }\StringTok{"DNK"}\NormalTok{, }\StringTok{"EST"}\NormalTok{, }\StringTok{"FIN"}\NormalTok{, }\StringTok{"FRA"}\NormalTok{, }\StringTok{"GEO"}\NormalTok{, }\StringTok{"DEU"}\NormalTok{, }\StringTok{"GRC"}\NormalTok{, }\StringTok{"HUN"}\NormalTok{, }\StringTok{"ISL"}\NormalTok{, }\StringTok{"IRL"}\NormalTok{, }\StringTok{"ISR"}\NormalTok{, }\StringTok{"ITA"}\NormalTok{, }\StringTok{"KAZ"}\NormalTok{, }\StringTok{"KGZ"}\NormalTok{, }\StringTok{"LVA"}\NormalTok{, }\StringTok{"LTU"}\NormalTok{, }\StringTok{"LUX"}\NormalTok{, }\StringTok{"MLT"}\NormalTok{, }\StringTok{"MCO"}\NormalTok{, }\StringTok{"MNE"}\NormalTok{, }\StringTok{"NLD"}\NormalTok{, }\StringTok{"MKD"}\NormalTok{, }\StringTok{"NOR"}\NormalTok{, }\StringTok{"POL"}\NormalTok{, }\StringTok{"PRT"}\NormalTok{, }\StringTok{"MDA"}\NormalTok{, }\StringTok{"ROU"}\NormalTok{, }\StringTok{"RUS"}\NormalTok{, }\StringTok{"SMR"}\NormalTok{, }\StringTok{"SRB"}\NormalTok{, }\StringTok{"SVK"}\NormalTok{, }\StringTok{"SVN"}\NormalTok{, }\StringTok{"ESP"}\NormalTok{, }\StringTok{"SWE"}\NormalTok{, }\StringTok{"CHE"}\NormalTok{, }\StringTok{"TJK"}\NormalTok{, }\StringTok{"TUR"}\NormalTok{, }\StringTok{"TKM"}\NormalTok{, }\StringTok{"UKR"}\NormalTok{, }\StringTok{"GBR"}\NormalTok{, }\StringTok{"UZB"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"Europa"}\NormalTok{,}
-    
-    \CommentTok{\# África }
-\NormalTok{    iso3 }\SpecialCharTok{\%in\%} \FunctionTok{c}\NormalTok{(}\StringTok{"DZA"}\NormalTok{, }\StringTok{"AGO"}\NormalTok{, }\StringTok{"BEN"}\NormalTok{, }\StringTok{"BWA"}\NormalTok{, }\StringTok{"BFA"}\NormalTok{, }\StringTok{"BDI"}\NormalTok{, }\StringTok{"CMR"}\NormalTok{, }\StringTok{"CPV"}\NormalTok{, }\StringTok{"CAF"}\NormalTok{, }\StringTok{"TCD"}\NormalTok{, }\StringTok{"COM"}\NormalTok{, }\StringTok{"COG"}\NormalTok{, }\StringTok{"CIV"}\NormalTok{, }\StringTok{"COD"}\NormalTok{, }\StringTok{"DJI"}\NormalTok{, }\StringTok{"EGY"}\NormalTok{, }\StringTok{"GNQ"}\NormalTok{, }\StringTok{"ERI"}\NormalTok{, }\StringTok{"ETH"}\NormalTok{, }\StringTok{"GAB"}\NormalTok{, }\StringTok{"GMB"}\NormalTok{, }\StringTok{"GHA"}\NormalTok{, }\StringTok{"GIN"}\NormalTok{, }\StringTok{"GNB"}\NormalTok{, }\StringTok{"KEN"}\NormalTok{, }\StringTok{"LSO"}\NormalTok{, }\StringTok{"LBR"}\NormalTok{, }\StringTok{"LBY"}\NormalTok{, }\StringTok{"MDG"}\NormalTok{, }\StringTok{"MWI"}\NormalTok{, }\StringTok{"MLI"}\NormalTok{, }\StringTok{"MRT"}\NormalTok{, }\StringTok{"MUS"}\NormalTok{, }\StringTok{"MAR"}\NormalTok{, }\StringTok{"MOZ"}\NormalTok{, }\StringTok{"NAM"}\NormalTok{, }\StringTok{"NER"}\NormalTok{, }\StringTok{"NGA"}\NormalTok{, }\StringTok{"RWA"}\NormalTok{, }\StringTok{"STP"}\NormalTok{, }\StringTok{"SEN"}\NormalTok{, }\StringTok{"SYC"}\NormalTok{, }\StringTok{"SLE"}\NormalTok{, }\StringTok{"SOM"}\NormalTok{, }\StringTok{"ZAF"}\NormalTok{, }\StringTok{"SSD"}\NormalTok{, }\StringTok{"SDN"}\NormalTok{, }\StringTok{"SYR"}\NormalTok{, }\StringTok{"TGO"}\NormalTok{, }\StringTok{"TUN"}\NormalTok{, }\StringTok{"UGA"}\NormalTok{, }\StringTok{"TZA"}\NormalTok{, }\StringTok{"ZMB"}\NormalTok{, }\StringTok{"ZWE"}\NormalTok{) }\SpecialCharTok{\textasciitilde{}} \StringTok{"África"}\NormalTok{,}
-    
-    \CommentTok{\# Caso por defecto para códigos no reconocidos o Oceanía pura}
-    \ConstantTok{TRUE} \SpecialCharTok{\textasciitilde{}} \StringTok{"Otras/No Clasificadas"}
-\NormalTok{  )) }\SpecialCharTok{\%\textgreater{}\%}
-  
-  \CommentTok{\# Convertimos variables categóricas a factores para análisis grupal}
-  \CommentTok{\# year lo convertimos a factor para comparación temporal}
-  \FunctionTok{mutate}\NormalTok{(}
-    \AttributeTok{country =} \FunctionTok{as.factor}\NormalTok{(country),}
-    \AttributeTok{iso3 =} \FunctionTok{as.factor}\NormalTok{(iso3),}
-    \AttributeTok{year =} \FunctionTok{as.factor}\NormalTok{(year), }\CommentTok{\# Convertimos año a factor para comparación temporal}
-    \AttributeTok{Region =} \FunctionTok{as.factor}\NormalTok{(Region)}
-\NormalTok{  )}
+\subsubsection{Simulación de Fallos y Validación del Protocolo ETL}
 
-\CommentTok{\# Imprimimos las dimensiones del data frame limpio y las primeras filas}
-\FunctionTok{print}\NormalTok{(}\FunctionTok{paste}\NormalTok{(}\StringTok{"Registros válidos (Ambos sexos, 2015{-}2019):"}\NormalTok{, }\FunctionTok{nrow}\NormalTok{(clean\_data\_alcohol)))}
-\end{Highlighting}
-\end{Shaded}
+Debido a la alta integridad de la fuente secundaria en el periodo
+2015-2019, se realizó un experimento de control para validar la
+capacidad de respuesta del protocolo de limpieza. Este procedimiento
+consistió en inyectar artificialmente un 10\% de ruido (valores NA) en
+una réplica de la muestra original.
 
-\begin{verbatim}
-## [1] "Registros válidos (Ambos sexos, 2015-2019): 940"
-\end{verbatim}
+El objetivo es demostrar, mediante una prueba de estrés, que el
+algoritmo de depuración identifica y elimina correctamente las
+inconsistencias, garantizando que los resultados finales de la
+investigación no se vean alterados por fallos en el reporte de origen.\\
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{print}\NormalTok{(}\StringTok{"Estructura final de los datos procesados y estratificados (str):"}\NormalTok{)}
-\end{Highlighting}
-\end{Shaded}
+\begin{longtable}[t]{>{}ccc}
+\caption{\label{tab:fase-ensuciado de la data}Prueba de Estrés: Validación del Algoritmo de Depuración}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Fase}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{N Total}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Valores Na}}}\\
+\midrule
+\endfirsthead
+\caption[]{Prueba de Estrés: Validación del Algoritmo de Depuración \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Fase}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{N Total}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Valores Na}}}\\
+\midrule
+\endhead
 
-\begin{verbatim}
-## [1] "Estructura final de los datos procesados y estratificados (str):"
-\end{verbatim}
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{Muestra Contaminada}} & \cellcolor[HTML]{F2D7D5}{940} & \cellcolor[HTML]{F2D7D5}{93}\\
+\textbf{Muestra Recuperada} & 801 & 0\\*
+\end{longtable}
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{str}\NormalTok{(clean\_data\_alcohol)}
-\end{Highlighting}
-\end{Shaded}
+\subsubsection{Protocolo de Recuperación (ETL)}
 
-\begin{verbatim}
-## 'data.frame':    940 obs. of  8 variables:
-##  $ country                  : Factor w/ 188 levels "Afghanistan",..: 45 150 135 130 31 152 108 173 179 140 ...
-##  $ iso3                     : Factor w/ 188 levels "AFG","AGO","ALB",..: 43 150 136 133 35 157 118 172 62 144 ...
-##  $ year                     : Factor w/ 5 levels "2015","2016",..: 3 5 3 4 4 2 4 4 4 5 ...
-##  $ alcohol_liters_per_capita: num  6.117 0.253 6.024 0.104 7.195 ...
-##  $ lower_ci                 : num  4.6272 0.1009 4.6817 0.0364 5.3801 ...
-##  $ upper_ci                 : num  7.798 0.567 7.537 0.34 9.066 ...
-##  $ ci_width                 : num  3.171 0.467 2.855 0.304 3.686 ...
-##  $ Region                   : Factor w/ 6 levels "África","América del Norte",..: 4 1 4 4 1 5 1 4 5 5 ...
-\end{verbatim}
+Una vez generada la muestra con inconsistencias, se aplicó el algoritmo
+de depuración definido en el Objetivo 1. El proceso consiste en la
+identificación y eliminación automática de las filas contaminadas,
+garantizando que la base de datos resultante sea apta para el cálculo de
+solapamientos de intervalos de confianza.
 
-\begin{Shaded}
-\begin{Highlighting}[]
-\FunctionTok{head}\NormalTok{(clean\_data\_alcohol }\SpecialCharTok{\%\textgreater{}\%} \FunctionTok{select}\NormalTok{(country, iso3, year, Region))}
-\end{Highlighting}
-\end{Shaded}
+\begin{longtable}[t]{>{}cccc}
+\caption{\label{tab:dataset-final}Validación de la eficacia del algoritmo de limpieza de datos}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Estado}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Registros.totales}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Valores.na.restantes}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo.medio}}}\\
+\midrule
+\endfirsthead
+\caption[]{Validación de la eficacia del algoritmo de limpieza de datos \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Estado}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Registros.totales}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Valores.na.restantes}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo.medio}}}\\
+\midrule
+\endhead
 
-\begin{verbatim}
-##        country iso3 year Region
-## 1       Cyprus  CYP 2017   Asia
-## 2 Sierra Leone  SLE 2019 África
-## 3  Philippines  PHL 2017   Asia
-## 4     Pakistan  PAK 2018   Asia
-## 5     Cameroon  CMR 2018 África
-## 6     Slovakia  SVK 2016 Europa
-\end{verbatim}
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{Muestra Contaminada}} & \cellcolor[HTML]{F2D7D5}{940} & \cellcolor[HTML]{F2D7D5}{139} & \cellcolor[HTML]{F2D7D5}{5.468782}\\
+\textbf{Muestra Recuperada} & 801 & 0 & 5.485767\\*
+\end{longtable}
 
-\subsection{Item 2}
+\subsection{Análisis Descriptivo y de Tendencia Central}
 
-Descripción\\
+Una vez validada la integridad del protocolo de procesamiento mediante
+la prueba de estrés, se procedió a la ejecución del Análisis Descriptivo
+y de Tendencia Central sobre la muestra definitiva (2015-2019). Esta
+fase es fundamental para establecer la línea base comparativa de la
+investigación, permitiendo transformar los microdatos nacionales en
+métricas agregadas que caracterizan el comportamiento del consumo y su
+precisión técnica a nivel global.
 
-\subsubsection{Item 2.2}
+El tratamiento estadístico se centró en la reducción de datos para
+obtener la Media Aritmética (APC) y la Desviación Estándar, junto con el
+análisis del Ancho del Intervalo de Confianza (ci\_width) como métrica
+de calidad.\\
 
-Descripción\\
+\begin{longtable}[t]{>{}cccc}
+\caption{\label{tab:analisis-descriptivo-final}Métricas de Tendencia Central y Calidad de Datos}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo Medio}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana Consumo}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Desviación Std}}}\\
+\midrule
+\endfirsthead
+\caption[]{Métricas de Tendencia Central y Calidad de Datos \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo Medio}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana Consumo}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Desviación Std}}}\\
+\midrule
+\endhead
 
-\subsection{Item n}
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{Europa}} & \cellcolor[HTML]{F2D7D5}{10.047752} & \cellcolor[HTML]{F2D7D5}{10.711757} & \cellcolor[HTML]{F2D7D5}{2.7974409}\\
+\textbf{América del Norte} & 9.678899 & 9.725894 & 0.3617484\\
+\textbf{\cellcolor[HTML]{F2D7D5}{Otras/Oceanía}} & \cellcolor[HTML]{F2D7D5}{8.787730} & \cellcolor[HTML]{F2D7D5}{8.789957} & \cellcolor[HTML]{F2D7D5}{2.0075821}\\
+\textbf{América Latina y el Caribe} & 6.078153 & 6.118551 & 2.3200247\\
+\textbf{\cellcolor[HTML]{F2D7D5}{África}} & \cellcolor[HTML]{F2D7D5}{3.811181} & \cellcolor[HTML]{F2D7D5}{3.031274} & \cellcolor[HTML]{F2D7D5}{3.4244870}\\
+\addlinespace
+\textbf{Asia} & 2.957892 & 1.966896 & 2.9230820\\*
+\end{longtable}
 
-Descripción\\
+\begin{longtable}[t]{>{}cc}
+\caption{\label{tab:analisis-descriptivo-final}Intervalo de confianza regional}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endfirsthead
+\caption[]{Intervalo de confianza regional \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{África}} & \cellcolor[HTML]{F2D7D5}{2.008364}\\
+\textbf{América del Norte} & 3.414951\\
+\textbf{\cellcolor[HTML]{F2D7D5}{América Latina y el Caribe}} & \cellcolor[HTML]{F2D7D5}{2.624600}\\
+\textbf{Asia} & 1.717345\\
+\textbf{\cellcolor[HTML]{F2D7D5}{Europa}} & \cellcolor[HTML]{F2D7D5}{3.550150}\\
+\addlinespace
+\textbf{Otras/Oceanía} & 3.131393\\*
+\end{longtable}
+
+\begin{longtable}[t]{>{}cccc}
+\caption{\label{tab:total-global}Métricas de Tendencia Central a Nivel Global}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo Medio}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana Consumo}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Desviación Std}}}\\
+\midrule
+\endfirsthead
+\caption[]{Métricas de Tendencia Central a Nivel Global \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Consumo Medio}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Mediana Consumo}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Desviación Std}}}\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{TOTAL GLOBAL}} & \cellcolor[HTML]{F2D7D5}{5.49675} & \cellcolor[HTML]{F2D7D5}{5.011499} & \cellcolor[HTML]{F2D7D5}{4.043374}\\*
+\end{longtable}
+
+\begin{longtable}[t]{>{}cc}
+\caption{\label{tab:total-global}Intervalo de Confianza a Nivel Global}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endfirsthead
+\caption[]{Intervalo de Confianza a Nivel Global \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{TOTAL GLOBAL}} & \cellcolor[HTML]{F2D7D5}{2.4094}\\*
+\end{longtable}
+
+\subsubsection{Evaluación de la media frente a la mediana}
+
+Debido a la naturaleza heterogénea del consumo de alcohol a nivel
+global, se incorporó un análisis de robustez comparando la Media
+Aritmética frente a la Mediana por cada macro-región. Este procedimiento
+tiene como objetivo detectar posibles sesgos causados por valores
+atípicos \texttt{(outliers)} países con consumos excepcionalmente altos
+o bajos--- que pudieran desplazar el promedio y, por ende, distorsionar
+la interpretación del ancho de los intervalos de confianza
+\texttt{(ci\_width)}.
+
+Una divergencia mínima entre ambas medidas (Sesgo Relativo \textless{}
+10\%) validará el uso de la media como estimador central representativo
+para la posterior comparación de intervalos. Para este cálculo se
+utilizó el siguiente algoritmo:\\
+
+\begin{longtable}[t]{>{}cc}
+\caption{\label{tab:calculo-robustez-central}Contraste entre la media y la meidana}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endfirsthead
+\caption[]{Contraste entre la media y la meidana \textit{(continued)}}\\
+\toprule
+\cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Region}}} & \cellcolor[HTML]{800000}{\textcolor{white}{\textbf{Incertidumbre Promedio}}}\\
+\midrule
+\endhead
+
+\endfoot
+\bottomrule
+\endlastfoot
+\textbf{\cellcolor[HTML]{F2D7D5}{TOTAL GLOBAL}} & \cellcolor[HTML]{F2D7D5}{2.4094}\\*
+\end{longtable}
+
+\subsubsection{Técnica de Comparación de Intervalos de Confianza y Regla de Decisión para el Consumo Regional}
+
+Para la ejecución de la técnica de comparación de intervalos, se
+desarrolló un algoritmo capaz de contrastar el límite superior de una
+región frente al límite inferior de otra. Esta metodología, fundamentada
+en la inferencia visual, permite dictaminar la existencia de brechas
+significativas en el consumo de alcohol sin las limitaciones de
+normalidad que exigen las pruebas paramétricas tradicionales. A
+continuación, se detalla el procesamiento de los datos para la
+construcción de los indicadores de superposición regional:\\
+
+\begin{center}\includegraphics[width=0.9\linewidth,]{informe_files/figure-latex/comparacion-intervalos-regional-1} \end{center}
 
 \chapter{Análisis de Resultados}
 
