@@ -4,8 +4,6 @@ author:
   - Andrea Figuera
   - Eduardo Espinoza
 date: "Abril 2026"
-
-# --- Metadatos Específicos de Plantilla ---
 degree: Computación I 
 director:
   - Jesus Ochoa
@@ -15,11 +13,7 @@ facultad:
   - Facultad de Ciencias Económicas y Sociales
   - Escuela de Estadistica y Ciencias Actuariales
 escudo: Latex/Classes/Escudos/faces
-
-# --- Bibliografía ---
 bibliography: bibliografia.bib
-
-# --- Configuración de Salida ---
 header-includes:
   - \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}} #para las listas 
   - \usepackage{booktabs} #para las tablas 
@@ -36,17 +30,15 @@ header-includes:
   - \usepackage{makecell}
   - \usepackage{xcolor} #colores
 output:
-  html_document:
-    toc: yes
-    df_print: paged
   pdf_document:
     template: template.tex
     keep_tex: yes
     toc: yes
     number_sections: yes
     citation_package: natbib
-
-# --- Resumen (Abstract) ---
+  html_document:
+    toc: yes
+    df_print: paged
 abstract: |
  En el presente informe se realiza un análisis del impacto de los valores atípicos y la incertidumbre estadística en las estimaciones del consumo global de alcohol (2015-2019). Se examina la robustez del promedio frente a la mediana y se evalúa la precisión de los intervalos de confianza mediante el análisis de solapamiento regional, aplicando técnicas de limpieza de datos (ETL), truncamiento por percentiles y visualización de densidades con R.
 ---
@@ -329,7 +321,7 @@ aplicar_estilo_tabla <- function(df, caption_text) {
   df %>%
     kable(
       booktabs = TRUE, 
-      escape = FALSE,
+      escape = TRUE,
       longtable = TRUE,
       caption = caption_text,
       align = "c",
@@ -459,7 +451,7 @@ comparacion_recuperacion <- data.frame(
   Estado = c("Muestra Contaminada", "Muestra Recuperada"),
  `Registros Totales` = c(nrow(muestra_sucia), nrow(muestra_recuperada)),
  `Valores NA Restantes` = c(sum(is.na(muestra_sucia$alcohol_liters_per_capita) | is.na(muestra_sucia$ci_width)), 0),
-  `Consumo Medio` = c(mean(muestra_sucia$alcohol_liters_per_capita, na.rm=TRUE), 
+  `Media` = c(mean(muestra_sucia$alcohol_liters_per_capita, na.rm=TRUE), 
                       mean(muestra_recuperada$alcohol_liters_per_capita))
 )
 
@@ -541,25 +533,28 @@ analisis_robustez <- clean_data_alcohol %>%
     Sesgo_Relativo_Pct = ((Media - Mediana) / Mediana) * 100,
     .groups = 'drop'
   )
-
+tabla_maestra <- analisis_robustez
  #tabla para el informe
 aplicar_estilo_tabla(tabla_maestra, "Contraste entre la media y la meidana")
 ```
+
 \subsubsection{Muestra Truncada}
 
 Con el fin de garantizar la robustez de los modelos estadísticos y mitigar el sesgo provocado por la asimetría de la distribución del consumo de alcohol, se aplicó un procedimiento de truncamiento técnico sobre la base de datos original.
 
-Este proceso se fundamentó en un algoritmo de filtrado por percentiles, seleccionando el Percentil 90 (P90​) como umbral crítico de corte. La elección de este método responde a la necesidad de estabilizar la varianza y asegurar que los estimadores de tendencia central no se vean distorsionados por observaciones extremas situadas en la cola superior de la distribución.
+Este proceso se fundamentó en un algoritmo de filtrado por percentiles, seleccionando el Percentil 90 (P90) como umbral crítico de corte. La elección de este método responde a la necesidad de estabilizar la varianza y asegurar que los estimadores de tendencia central no se vean distorsionados por observaciones extremas situadas en la cola superior de la distribución.
 
 El procedimiento metodológico se ejecutó bajo los siguientes pasos:
 
-    Identificación del Umbral: Cálculo del valor correspondiente al P90​ en la variable de consumo per cápita.
 
-    Criterio de Exclusión: Eliminación sistemática de las observaciones cuyo valor superara dicho límite, aislando así el 10% de la muestra con mayor volatilidad.
+**Identificación del Umbral**: Cálculo del valor correspondiente al P90 en la variable de consumo per cápita.
 
-    Validación de la Muestra Depurada: Comparación de los estadísticos descriptivos (media, desviación estándar y valores máximos) para verificar la ganancia en homogeneidad.
+**Criterio de Exclusión**: Eliminación sistemática de las observaciones cuyo valor superara dicho límite, aislando así el 10% de la muestra con mayor volatilidad.
+
+**Validación de la Muestra Depurada**: Comparación de los estadísticos descriptivos (media, desviación estándar y valores máximos) para verificar la ganancia en homogeneidad.
 
 Como se detalla en la tabla adjunta, este ajuste metodológico permitió transitar de una muestra con alta dispersión a una muestra truncada (depurada), optimizada para la aplicación de técnicas de inferencia y regresión, asegurando que los resultados reflejen la tendencia del comportamiento global sin la interferencia de ruidos estadísticos atípicos.\
+
 ```{r algoritmo-truncamiento-percentil}
 #definimos el límite: solo se queda el 90% de los datos con menor consumo
 umbral_p90 <- quantile(clean_data_alcohol$alcohol_liters_per_capita, 0.90, na.rm = TRUE)
@@ -570,7 +565,7 @@ muestra_truncada_p90 <- clean_data_alcohol %>%
 
 #creamos una tabla que compare ambas muestras 
 tabla_comparativa <- data.frame(
-  Indicador = c("Nro. de Países", "Media (Litros)", "Desv. Estándar", "Valor Máximo"),
+  Indicador = c("Nro.Países", "Media (Litros)", "Desv.Estándar", "Valor Máx"),
   Muestra_Completa = c(
     nrow(clean_data_alcohol),
     round(mean(clean_data_alcohol$alcohol_liters_per_capita, na.rm = TRUE), 2),
@@ -585,8 +580,9 @@ tabla_comparativa <- data.frame(
   )
 )
 
-aplicar_estilo_tabla(tabla_comparativa, "Comparación Estadística: Muestra Completa vs. Muestra Truncada (P90)")
+aplicar_estilo_tabla(tabla_comparativa, "Muestra Completa vs. Muestra Truncada (P90)")
 ```
+
 \subsubsection{Técnica de Comparación de Intervalos de Confianza y Regla de Decisión para el Consumo Regional}
 
 Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las pruebas paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:\
@@ -605,10 +601,11 @@ tabla_de_intervalos <- clean_data_alcohol %>%
   arrange(desc(Media)) %>%
   mutate(across(where(is.numeric), ~ round(.x, 2)))
 
-colnames(tabla_de_intervalos) <- c("Región", "N° Países", "Consumo Medio", "Lím. Inferior", "Lím. Superior", "Margen Error")
+colnames(tabla_de_intervalos) <- c("Region", "Paises", "Media", "Lim. Inf", "Lim. Sup", "Marg Error")
 
-aplicar_estilo_tabla(tabla_de_intervalos, "Inferencia Estadística: Estimación del Consumo por Región (IC 95%)")
+aplicar_estilo_tabla(tabla_de_intervalos, "Estimación del Consumo por Región (IC 95)")
 ``` 
+
 \chapter{Análisis de Resultados}
 
 {\small En este capítulo se presentan los hallazgos derivados de la aplicación de los métodos estadísticos descritos previamente sobre el conjunto de datos `alcohol_data.csv`. El análisis se estructura en tres fases fundamentales: la evaluación de la calidad y robustez de los datos post-ETL, la caracterización descriptiva del consumo y la incertidumbre por macro-regiones, y finalmente, la contrastación de significancia mediante la superposición de intervalos de confianza.}
@@ -775,13 +772,15 @@ Agrupación Inferior (Sin diferencias significativas internas): De manera simila
 
 \section{Evaluación de la Incertidumbre mediante el Coeficiente de Pearson}
 
-\ Para profundizar en el análisis de consistencia, se presenta a continuación un gráfico de dispersión que evalúa la relación bivariada entre el consumo per cápita y la incertidumbre de la medición (ci_width), estratificado por macro-regiones. Esta visualización permite identificar no solo la tendencia global, sino también los comportamientos diferenciales y la concentración de datos en grupos específicos de países.\
+\ Para profundizar en el análisis de consistencia, se presenta a continuación un gráfico de dispersión que evalúa la asociación entre el consumo per cápita y la incertidumbre de la medición `(ci_width)`, estratificado por macro-regiones. Dado que los datos presentan una distribución asimétrica, se optó por el Coeficiente de Spearman, el cual resulta más robusto ante valores atípicos y relaciones no lineales. Esta visualización permite identificar la tendencia monótona global, así como los comportamientos diferenciales y la concentración de datos en grupos específicos de países\
 
-```{r grafico-correlacion-por-region}
-#calculo del coeficiente pearson
+```{r grafico-por-region}
+#calculo del coeficiente de spearmam
 cor_val <- cor(clean_data_alcohol$alcohol_liters_per_capita, 
-               clean_data_alcohol$ci_width, use = "complete.obs")
-label_cor <- paste("Pearson R = ", round(cor_val, 3))
+               clean_data_alcohol$ci_width, 
+               method = "spearman", 
+               use = "complete.obs")
+label_cor <- paste("Spearman Rho =", round(cor_val, 3))
 
 #gráfico con colores por Región y Jitter
 ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
@@ -801,7 +800,7 @@ ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
     x = "Consumo Per Cápita (Litros de Alcohol Puro)",
     y = "Ancho del Intervalo (ci_width)",
     color = "Macro-Región",
-    caption = "Fuente: Elaboración propia basada en microdatos OMS (2015-2019)"
+    caption = "Fuente: Elaboración propia a partir de los datos procesados (2015-2019)"
   ) +
   
   #etiquetas pro :)
@@ -811,25 +810,19 @@ ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
     plot.title = element_text(face = "bold", color = "#800000"),
     panel.grid.minor = element_blank(),
      legend.text = element_text(size = 8)  # ajuste del espacio de la leyenda 
-   )
+   ) +
 
   guides(color = guide_legend(nrow = 2, override.aes = list(alpha = 1, size = 3)))
 ```
-\ El gráfico es un diagrama de dispersión (scatter plot) con una línea de regresión lineal que evalúa la consistencia técnica de los datos reportados para objeto del estudio.
+\ El gráfico presenta un diagrama de dispersión que evalúa la asociación monótona entre el volumen de consumo y la incertidumbre del reporte.
 
-    Coeficiente de Correlación (Pearson R = 0.933): Indica una correlación positiva muy fuerte y directa. En términos sencillos: a medida que aumenta el consumo de alcohol per cápita en un país, también aumenta la incertidumbre estadística de la medición.
+   Coeficiente de Spearman (ρ=0.969): Este valor indica una asociación positiva casi perfecta. Al utilizar Spearman en lugar de Pearson, se valida que existe una relación jerárquica robusta: conforme aumenta el consumo, la incertidumbre crece de manera sistemática, incluso si esta relación no sigue una línea recta exacta o presenta una varianza no constante (heterocedasticidad).
 
-  Distribución por Macro-Regiones:
+  Distribución por Macro-Regiones: Se observa una clara segmentación geográfica. Europa domina el cuadrante de alta incertidumbre y alto consumo, mientras que África y Asia muestran una mayor precisión estadística asociada a menores niveles de ingesta.
 
-  Europa: Se agrupa claramente en el extremo superior derecho. Es la región con mayor consumo, pero también donde los intervalos de confianza son más amplios (mayor dispersión).
+  Análisis de la Variabilidad: El gráfico revela que la precisión del dato no es uniforme. La dispersión aumenta en los niveles altos de consumo, lo que justifica el uso de métodos no paramétricos (como Spearman), ya que Pearson habría subestimado la fuerza de la asociación al verse afectado por la mayor variabilidad en los extremos.
 
-  África y Asia: Se concentran en el extremo inferior izquierdo. Representan un grupo homogéneo de bajo consumo con mayor precisión estadística (intervalos más estrechos).
-
-   América Latina: Se ubica en un rango medio, manteniendo la tendencia de la línea de regresión.
-
- El gráfico muestra que la variabilidad no es constante. A mayores niveles de consumo, los puntos se alejan más de la línea de regresión, lo que sugiere que estimar el consumo en países con alta ingesta es técnicamente más complejo o propenso a errores de reporte.
-
-    Consistencia Técnica: El R=0.933 valida que el modelo de reporte es consistente: la incertidumbre es una función directa del volumen. Si hubiera puntos muy alejados de esta tendencia (outliers), indicarían errores de medición específicos en esos países./
+  Conclusión Técnica: El valor de 0.969 confirma que la incertidumbre es una función intrínseca del volumen reportado. Esta consistencia tan alta sugiere que el error de medición es sistémico y no aleatorio, lo que refuerza la necesidad de tratar los datos de alto consumo con los ajustes de incertidumbre propuestos en este estudio./
     
 \section{Diagnóstico de la Influencia de Valores Atípicos}
 
@@ -1009,6 +1002,10 @@ América Latina y el Caribe: Muestra una dispersión moderada pero constante. Su
 
 África: Es la región con la mayor amplitud total (desde casi 0 hasta 16 litros), lo que demuestra que es la zona con mayor desigualdad estadística en sus hábitos de consumo.
 
+\section{Truncamiento de la Muestra y su Impacto en los Promedios Regionales}
+
+El truncamiento al P90 no se propone como un reemplazo de la muestra original, sino como un diagnóstico de sensibilidad. La variación observada al excluir solo el 10% superior confirma que la media aritmética es un estimador ineficiente para esta distribución, validando así la necesidad de utilizar la mediana o métodos no paramétricos para el análisis regional.
+
 ```{r grafico-comparativo-medias-corregido, fig.height=6, fig.width=9}
 #calculos
 media_completa <- mean(clean_data_alcohol$alcohol_liters_per_capita, na.rm = TRUE)
@@ -1057,7 +1054,7 @@ ggplot(datos_largos, aes(x = Grupo, y = alcohol_liters_per_capita, fill = Grupo)
 ```
 Este gráfico permite visualizar el éxito de la limpieza de datos. En la muestra original, la "cola" de la distribución se extendía demasiado hacia arriba, lo que hacía que el promedio (la media) se situara en 5.50 litros, una cifra que no representaba a la mayoría de los países. Al aplicar el truncamiento del 10% superior, logramos una distribución más equilibrada donde la media bajó a 4.71 litros.
 
-    Conclusión: La limpieza eliminó el "ruido" de los países con consumos extremos, permitiendo que el promedio ahora sí sea un reflejo fiel de la realidad global./
+ La limpieza eliminó el "ruido" de los países con consumos extremos, permitiendo que el promedio ahora sí sea un reflejo fiel de la realidad global./
     
 ```{r grafico-boxplot-truncado}
 #calculamos 
@@ -1147,27 +1144,27 @@ El problema de los promedios en LATAM y Oceanía: Se desaconseja utilizar la "Me
 
 Se recomienda que las organizaciones globales de salud (como la OMS/OPS) no apliquen estrategias genéricas de control de consumo.
 
-    Para el Clúster de Alto Consumo (Europa, Norteamérica, Oceanía): Dado que la diferencia entre sus medias no es significativa, se pueden estandarizar campañas transnacionales centradas en la reducción de daños crónicos, ya que el comportamiento de consumo es homogéneo y estructuralmente elevado.
+   Para el Clúster de Alto Consumo (Europa, Norteamérica, Oceanía): Dado que la diferencia entre sus medias no es significativa, se pueden estandarizar campañas transnacionales centradas en la reducción de daños crónicos, ya que el comportamiento de consumo es homogéneo y estructuralmente elevado.
 
-    Para el Clúster de Bajo Consumo (África, Asia): El enfoque debe ser preventivo para evitar el desplazamiento de la media hacia niveles superiores debido a la apertura de mercados y cambios demográficos.
+   Para el Clúster de Bajo Consumo (África, Asia): El enfoque debe ser preventivo para evitar el desplazamiento de la media hacia niveles superiores debido a la apertura de mercados y cambios demográficos.
 
 2. Monitoreo Especial de la Incertidumbre en LATAM
 
 Dada la posición aislada de América Latina y el Caribe en la escala global, se recomienda fortalecer los sistemas de vigilancia epidemiológica locales.
 
-    Es vital reducir el ancho de los intervalos de confianza (ci_width) en esta región, ya que su bimodalidad (detectada en el análisis de densidad) sugiere que los promedios regionales podrían estar ocultando realidades críticas en países específicos que no se ajustan al "clúster moderado".
+   Es vital reducir el ancho de los intervalos de confianza (ci_width) en esta región, ya que su bimodalidad (detectada en el análisis de densidad) sugiere que los promedios regionales podrían estar ocultando realidades críticas en países específicos que no se ajustan al "clúster moderado".
 
 3. Mejora en la Precisión de Reportes (Incertidumbre Técnica)
 
 Una recomendación metodológica clave es incentivar la transición de reportes basados en estimaciones a reportes basados en registros administrativos reales.
 
-    Se observa que las regiones con mayor sesgo (como Asia) suelen coincidir con una mayor variabilidad en la precisión de los datos. Reducir la incertidumbre técnica permitirá que los clústeres identificados en este estudio sean aún más precisos en futuras investigaciones.
+  Se observa que las regiones con mayor sesgo (como Asia) suelen coincidir con una mayor variabilidad en la precisión de los datos. Reducir la incertidumbre técnica permitirá que los clústeres identificados en este estudio sean aún más precisos en futuras investigaciones.
 
 4. Uso de la Mediana como Indicador de Seguimiento
 
 Para futuros análisis de estos mismos datos, se recomienda adoptar la Mediana como indicador oficial de comparación para los clústeres de África y Asia.
 
-    Debido al sesgo positivo detectado, el uso de la media sobreestima el consumo del "país típico" en esas zonas, lo que podría llevar a una asignación ineficiente de recursos para la salud.\
+  Debido al sesgo positivo detectado, el uso de la media sobreestima el consumo del "país típico" en esas zonas, lo que podría llevar a una asignación ineficiente de recursos para la salud.\
 
 \textbf{3.-} Dominio Europeo: Europa no solo lidera el consumo, sino que es la región que define la pendiente de la incertidumbre global en este estudio.\
 
@@ -1232,9 +1229,10 @@ ggplot(heatmap_alcohol, aes(x = Region, y = Consumo_Bin, fill = N_Paises)) +
 
 \chapter{Identificación de Países con Consumo Extremo}
 
-Con el objetivo de profundizar en la transparencia del tratamiento de datos, este anexo presenta el listado detallado de las naciones que fueron excluidas de la muestra final tras la aplicación del algoritmo de truncamiento por el percentil 90 (P90​).
+Con el objetivo de profundizar en la transparencia del tratamiento de datos, este anexo presenta el listado detallado de las naciones que fueron excluidas de la muestra final tras la aplicación del algoritmo de truncamiento por el percentil 90 (P90).
 
 Estas observaciones representan el 10% de la muestra con mayores niveles de ingesta de alcohol per cápita (valores superiores a 11.25 litros). La tabla permite identificar que el sesgo original de la media (situada inicialmente en 5.50 litros) era producto de estos casos atípicos, cuya dispersión afectaba la representatividad del análisis regional. A continuación, se detallan los países, su región y el valor exacto de consumo registrado:\
+
 ```{r anexo-lista-excluidos}
 #identificamos los paises con valores atipicos
 lista_excluidos <- clean_data_alcohol %>%
@@ -1247,48 +1245,45 @@ colnames(lista_excluidos) <- c("Región", "País", "Consumo (L/Cápita)")
 
 #tabla 
 aplicar_estilo_tabla(lista_excluidos, 
-                     "Países Excluidos del Análisis por Consumo Extremo (>11.25 L)") %>%
-  kableExtra::kable_styling(bootstrap_options = c("striped", "hover"), 
-                            full_width = F) %>%
-  kableExtra::scroll_box(width = "100%", height = "400px") #si la lista es muy larga (94 países), usamos scroll para que no ocupe 5 páginas
+                     "Países Excluidos del Análisis por Consumo Extremo")
 ```
 
-\chapter*{Referencias Bibliográficas}
+\chapter*{Referencias Bibliograficas}
 
-En esta sección se detallan las bases teóricas, metodológicas y computacionales que sustentan el presente análisis. Las fuentes seleccionadas abarcan desde los fundamentos del análisis exploratorio hasta las investigaciones globales sobre el tratamiento de la incertidumbre en salud pública y mercados.
+En esta seccion se detallan las bases teoricas, metodologicas y computacionales que sustentan el presente analisis. Las fuentes seleccionadas abarcan desde los fundamentos del analisis exploratorio hasta las investigaciones globales sobre el tratamiento de la incertidumbre en salud publica y mercados.
 
-## Bases de Estadística y Probabilidad
+## Bases de Estadistica y Probabilidad
 
 * **Tukey, J. W. (1977).** *Exploratory Data Analysis*. Addison-Wesley. 
-    > (Referencia fundamental para el desarrollo del EDA y la visualización de datos mediante diagramas de caja y bigotes). [@tukey1977exploratory]
+    > (Referencia fundamental para el desarrollo del EDA y la visualizacion de datos mediante diagramas de caja y bigotes). [@tukey1977exploratory]
     
 * **Huber, P. J. (1981).** *Robust Statistics*. John Wiley & Sons. 
-    > (Sustento teórico para el manejo de valores atípicos y la crítica a la sensibilidad de la media aritmética). [@huber1981robust]
+    > (Sustento teorico para el manejo de valores atipicos y la critica a la sensibilidad de la media aritmetica). [@huber1981robust]
     
 * **Spiegelhalter, D. (2019).** *The Art of Statistics: Learning from Data*. Pelican Books. 
-    > (Obra clave para entender la comunicación del riesgo y la tiranía de los promedios en la toma de decisiones). [@spiegelhalter2019art]
+    > (Obra clave para entender la comunicacion del riesgo y la tirania de los promedios en la toma de decisiones). [@spiegelhalter2019art]
 
 * **Huff, D. (1954).** *How to Lie with Statistics*. W. W. Norton & Company. 
-    > (Validación sobre la manipulación política y social de los indicadores estadísticos centrales). [@huff1954how]
+    > (Validacion sobre la manipulacion politica y social de los indicadores estadisticos centrales). [@huff1954how]
 
 ## Investigaciones y Casos de Estudio
 
 * **World Health Organization (2018).** *Global status report on alcohol and health 2018*. 
-    > (Referencia para el estudio de indicadores transversales y la complejidad de las estimaciones per cápita). [@who2018alcohol]
+    > (Referencia para el estudio de indicadores transversales y la complejidad de las estimaciones per capita). [@who2018alcohol]
 
 * **GBD 2016 Alcohol Collaborators (2018).** *Alcohol use and burden for 195 countries and territories*. The Lancet. 
-    > (Investigación que ilustra el fenómeno de solapamiento de intervalos de confianza en comparaciones internacionales). [@gbd2018alcohol]
+    > (Investigacion que ilustra el fenomeno de solapamiento de intervalos de confianza en comparaciones internacionales). [@gbd2018alcohol]
 
 * **Van der Bles, A. M., et al. (2019).** *Communicating uncertainty about facts, numbers and science*. Royal Society Open Science. 
-    > (Estudio sobre la importancia técnica de reportar la variabilidad y el error en los datos públicos). [@vanderbles2019communicating]
+    > (Estudio sobre la importancia tecnica de reportar la variabilidad y el error en los datos publicos). [@vanderbles2019communicating]
 
-## Fundamentos de Computación y Análisis de Datos
+## Fundamentos de Computacion y Analisis de Datos
 
-* **Wickham, H., et al. (2019).** *Welcome to the Tidyverse*. Journal of Open Source Software. 
-    > (Referencia técnica para el procesamiento de datos bajo el paradigma de programación funcional en R). [@wickham2019welcome]
+* **Wickham, H., et al. (2019).** *Welcome to the tidyverse*. Journal of Open Source Software. 
+    > (Referencia tecnica para el procesamiento de datos bajo el paradigma de programacion funcional en R). [@wickham2019welcome]
 
 * **Wilke, C. O. (2019).** *Fundamentals of Data Visualization*. O'Reilly Media. 
-    > (Guía para el diseño de visualizaciones que representen fielmente la densidad de probabilidad y la incertidumbre). [@wilke2019fundamentals]
+    > (Guia para el diseno de visualizaciones que representen fielmente la densidad de probabilidad y la incertidumbre). [@wilke2019fundamentals]
 
 * **Little, R. J. A., & Rubin, D. B. (2019).** *Statistical analysis with missing data*. John Wiley & Sons. 
-    > (Tratamiento avanzado de valores faltantes y el impacto del sesgo de selección en bases de datos masivas). [@little2019statistical]
+    > (Tratamiento avanzado de valores faltantes y el impacto del sesgo de seleccion en bases de datos masivas). [@little2019statistical]
