@@ -814,21 +814,15 @@ ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
 
   guides(color = guide_legend(nrow = 2, override.aes = list(alpha = 1, size = 3)))
 ```
-\ El gráfico es un diagrama de dispersión (scatter plot) con una línea de regresión lineal que evalúa la consistencia técnica de los datos reportados para objeto del estudio.
+\ El gráfico presenta un diagrama de dispersión que evalúa la asociación monótona entre el volumen de consumo y la incertidumbre del reporte.
 
-  Coeficiente de Correlación (Pearson R = 0.933): Indica una correlación positiva muy fuerte y directa. En términos sencillos: a medida que aumenta el consumo de alcohol per cápita en un país, también aumenta la incertidumbre estadística de la medición.
+   Coeficiente de Spearman (ρ=0.969): Este valor indica una asociación positiva casi perfecta. Al utilizar Spearman en lugar de Pearson, se valida que existe una relación jerárquica robusta: conforme aumenta el consumo, la incertidumbre crece de manera sistemática, incluso si esta relación no sigue una línea recta exacta o presenta una varianza no constante (heterocedasticidad).
 
-  Distribución por Macro-Regiones:
+  Distribución por Macro-Regiones: Se observa una clara segmentación geográfica. Europa domina el cuadrante de alta incertidumbre y alto consumo, mientras que África y Asia muestran una mayor precisión estadística asociada a menores niveles de ingesta.
 
-  Europa: Se agrupa claramente en el extremo superior derecho. Es la región con mayor consumo, pero también donde los intervalos de confianza son más amplios (mayor dispersión).
+  Análisis de la Variabilidad: El gráfico revela que la precisión del dato no es uniforme. La dispersión aumenta en los niveles altos de consumo, lo que justifica el uso de métodos no paramétricos (como Spearman), ya que Pearson habría subestimado la fuerza de la asociación al verse afectado por la mayor variabilidad en los extremos.
 
-  África y Asia: Se concentran en el extremo inferior izquierdo. Representan un grupo homogéneo de bajo consumo con mayor precisión estadística (intervalos más estrechos).
-
-   América Latina: Se ubica en un rango medio, manteniendo la tendencia de la línea de regresión.
-
- El gráfico muestra que la variabilidad no es constante. A mayores niveles de consumo, los puntos se alejan más de la línea de regresión, lo que sugiere que estimar el consumo en países con alta ingesta es técnicamente más complejo o propenso a errores de reporte.
-
-  El R=0.933 valida que el modelo de reporte es consistente: la incertidumbre es una función directa del volumen. Si hubiera puntos muy alejados de esta tendencia (outliers), indicarían errores de medición específicos en esos países./
+  Conclusión Técnica: El valor de 0.969 confirma que la incertidumbre es una función intrínseca del volumen reportado. Esta consistencia tan alta sugiere que el error de medición es sistémico y no aleatorio, lo que refuerza la necesidad de tratar los datos de alto consumo con los ajustes de incertidumbre propuestos en este estudio./
     
 \section{Diagnóstico de la Influencia de Valores Atípicos}
 
