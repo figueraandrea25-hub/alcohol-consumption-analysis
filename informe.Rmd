@@ -1271,9 +1271,6 @@ En esta sección se detallan las bases teóricas, metodológicas y computacional
 * **Huff, D. (1954).** *How to Lie with Statistics*. W. W. Norton & Company. 
     > (Validación sobre la manipulación política y social de los indicadores estadísticos centrales). [@huff1954how]
 
-* **Pareto, V. (1896).** *Cours d'économie politique*. Rouge. 
-    > (Base teórica para el análisis de la distribución de ventas y la regla del 80/20 observada en el mercado de videojuegos). [@pareto1896cours]
-
 ## Investigaciones y Casos de Estudio
 
 * **World Health Organization (2018).** *Global status report on alcohol and health 2018*. 
