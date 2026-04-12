@@ -770,7 +770,7 @@ Aislamiento de América Latina y el Caribe: El intervalo de confianza para esta 
 
 Agrupación Inferior (Sin diferencias significativas internas): De manera similar al bloque superior, los intervalos de confianza de África y Asia presentan un claro solapamiento. Por lo tanto, la diferencia observada entre sus medias (3.81 vs. 2.96) no es estadísticamente significativa; ambas regiones conforman un grupo homogéneo de bajo consumo.\
 
-\section{Evaluación de la Incertidumbre mediante el Coeficiente de Pearson}
+\section{Evaluación de la Incertidumbre mediante el Coeficiente de Spearman}
 
 \ Para profundizar en el análisis de consistencia, se presenta a continuación un gráfico de dispersión que evalúa la asociación entre el consumo per cápita y la incertidumbre de la medición `(ci_width)`, estratificado por macro-regiones. Dado que los datos presentan una distribución asimétrica, se optó por el Coeficiente de Spearman, el cual resulta más robusto ante valores atípicos y relaciones no lineales. Esta visualización permite identificar la tendencia monótona global, así como los comportamientos diferenciales y la concentración de datos en grupos específicos de países\
 
@@ -816,7 +816,7 @@ ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
 ```
 \ El gráfico presenta un diagrama de dispersión que evalúa la asociación monótona entre el volumen de consumo y la incertidumbre del reporte.
 
-   Coeficiente de Spearman (ρ=0.969): Este valor indica una asociación positiva casi perfecta. Al utilizar Spearman en lugar de Pearson, se valida que existe una relación jerárquica robusta: conforme aumenta el consumo, la incertidumbre crece de manera sistemática, incluso si esta relación no sigue una línea recta exacta o presenta una varianza no constante (heterocedasticidad).
+   Coeficiente de Spearman (p=0.969): Este valor indica una asociación positiva casi perfecta. Al utilizar Spearman en lugar de Pearson, se valida que existe una relación jerárquica robusta: conforme aumenta el consumo, la incertidumbre crece de manera sistemática, incluso si esta relación no sigue una línea recta exacta o presenta una varianza no constante (heterocedasticidad).
 
   Distribución por Macro-Regiones: Se observa una clara segmentación geográfica. Europa domina el cuadrante de alta incertidumbre y alto consumo, mientras que África y Asia muestran una mayor precisión estadística asociada a menores niveles de ingesta.
 
