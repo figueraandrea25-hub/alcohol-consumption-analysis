@@ -1284,7 +1284,7 @@ En esta sección se detallan las bases teóricas, metodológicas y computacional
 
 ## Fundamentos de Computación y Análisis de Datos
 
-* **Wickham, H., et al. (2019).** *Welcome to the Tidyverse*. Journal of Open Source Software. 
+* **Wickham, H., et al. (2019).** *Welcome to the tidyverse*. Journal of Open Source Software. 
     > (Referencia técnica para el procesamiento de datos bajo el paradigma de programación funcional en R). [@wickham2019welcome]
 
 * **Wilke, C. O. (2019).** *Fundamentals of Data Visualization*. O'Reilly Media. 
