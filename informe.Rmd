@@ -1,26 +1,41 @@
 ---
-title: "El Consumo de alcohol per capital y los datos que no se miden"
+title: "El Consumo de alcohol per cápita y los datos que no se miden"
 author:
-- Andrea Figuera
-- Eduardo Espinoza
+  - Andrea Figuera
+  - Eduardo Espinoza
 date: "Abril 2026"
+header-includes:
+  - \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+  - \usepackage{booktabs}
+  - \usepackage{longtable}
+  - \usepackage{array}
+  - \usepackage{multirow}
+  - \usepackage{wrapfig}
+  - \usepackage{float}
+  - \usepackage{colortbl}
+  - \usepackage{pdflscape}
+  - \usepackage{tabu}
+  - \usepackage{threeparttable}
+  - \usepackage[normalem]{ulem}
+  - \usepackage{makecell}
+  - \usepackage{xcolor}
 output:
-  html_document:
-    toc: yes
-    df_print: paged
   pdf_document:
     template: template.tex
     keep_tex: yes
     toc: yes
     number_sections: yes
     citation_package: natbib
+  html_document:
+    toc: yes
+    df_print: paged
 director:
-- Jesus Ochoa
-- Oliver Triveño
+  - Jesus Ochoa
+  - Oliver Triveño
 lugar: Caracas
 facultad:
-- Facultad de Ciencias Económicas y Sociales
-- Escuela de Estadistica y Ciencias Actuariales
+  - Facultad de Ciencias Económicas y Sociales
+  - Escuela de Estadistica y Ciencias Actuariales
 escudo: Latex/Classes/Escudos/faces
 bibliography: bibliografia.bib
 degree: Computación I
@@ -293,14 +308,14 @@ aplicar_estilo_tabla <- function(df, caption_text) {
     kable_styling(
       latex_options = c("striped", "hold_position", "repeat_header"),
       full_width = FALSE,
-      stripe_color = "#EBF5FB" # Azul muy tenue para filas
+      stripe_color = "#F2D7D5" # Azul muy tenue para filas
     ) %>%
-    row_spec(0, bold = TRUE, color = "white", background = "#2E86C1") %>% # Encabezado Azul
+    row_spec(0, bold = TRUE, color = "white", background = "#800000") %>% # Encabezado Azul
     column_spec(1, bold = TRUE)
 }
 ```
 
-```{r data-wrangling, echo=FALSE, message=FALSE, warning=FALSE}
+```{r data-wrangling, include=FALSE}
 
 #carga de la data
 raw_data_alcohol <- read_csv("alcohol_data.csv", show_col_types = FALSE)
@@ -419,7 +434,7 @@ comparacion_recuperacion <- data.frame(
                       mean(muestra_recuperada$alcohol_liters_per_capita))
 )
 
-aplicar_estilo_tabla(validación_algoritmo, "Validación de la eficacia del algoritmo de limpieza de datos")
+aplicar_estilo_tabla(comparacion_recuperacion, "Validación de la eficacia del algoritmo de limpieza de datos")
 ```
 
 \subsection{Análisis Descriptivo y de Tendencia Central}
@@ -437,24 +452,49 @@ resumen_regional <- clean_data_alcohol %>%
     Consumo_Medio = mean(alcohol_liters_per_capita),
     Mediana_Consumo = median(alcohol_liters_per_capita),
     Desviación_Std = sd(alcohol_liters_per_capita),
-    Incertidumbre_Promedio = mean(ci_width),
     .groups = 'drop'
   ) %>%
   arrange(desc(Consumo_Medio))
 
-# Añadir fila de Total Global con manejo estadístico correcto
+
+tabla_maestra <- bind_rows(resumen_regional)
+
+aplicar_estilo_tabla(tabla_maestra, "Métricas de Tendencia Central y Calidad de Datos") 
+
+ #intervalo de confianza
+resumen_regional <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(
+    Incertidumbre_Promedio = mean(ci_width),
+    .groups = 'drop'
+  ) 
+
+tabla_maestra <- bind_rows(resumen_regional)
+
+aplicar_estilo_tabla(tabla_maestra, "Intervalo de confianza regional") 
+```
+
+``` {r total-global}
+
+# Total Global 
 total_global <- clean_data_alcohol %>%
   summarise(
     Region = "TOTAL GLOBAL",
     Consumo_Medio = mean(alcohol_liters_per_capita),
     Mediana_Consumo = median(alcohol_liters_per_capita),
     Desviación_Std = sd(alcohol_liters_per_capita),
+  )
+tabla_maestra <- bind_rows(total_global)
+aplicar_estilo_tabla(tabla_maestra, "Métricas de Tendencia Central a Nivel Global") 
+
+# Total Global 
+total_global <- clean_data_alcohol %>%
+  summarise(
+    Region = "TOTAL GLOBAL",
     Incertidumbre_Promedio = mean(ci_width)
   )
-
-tabla_maestra <- bind_rows(resumen_regional, total_global)
-
-aplicar_estilo_tabla(tabla_maestra, "Métricas de Tendencia Central y Calidad de Datos por Macro-Región")
+tabla_maestra <- bind_rows(total_global)
+aplicar_estilo_tabla(tabla_maestra, "Intervalo de Confianza a Nivel Global") 
 ```
 
 \subsubsection{Evaluación de la media frente a la mediana}
@@ -477,7 +517,7 @@ analisis_robustez <- clean_data_alcohol %>%
   )
 
  # Tabla para el informe
-aplicar_estilo_tabla(tabla_maestra, "Contraste entre la media y la meidana")
+aplicar_estilo_tabla(analisis_robustez, "Contraste entre la media y la mediana")
 ```
 
 
@@ -485,7 +525,7 @@ aplicar_estilo_tabla(tabla_maestra, "Contraste entre la media y la meidana")
 
 Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las pruebas paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:\
 
-```{r comparacion-intervalos-regional, echo=FALSE, message=FALSE, warning=FALSE}
+```{r comparacion-intervalos-regional}
 
 # Preparación de datos para visualización técnica
 data_plot <- clean_data_alcohol %>%
@@ -497,11 +537,11 @@ data_plot <- clean_data_alcohol %>%
   )
 
 ggplot(data_plot, aes(x = reorder(Region, Media), y = Media)) +
-  geom_errorbar(aes(ymin = LI, ymax = LS), width = 0.2, color = "#2E86C1", size = 1) +
-  geom_point(size = 3, color = "#1B4F72") +
+  geom_errorbar(aes(ymin = LI, ymax = LS), width = 0.2, color = "#E6283E", size = 1) +
+  geom_point(size = 3, color = "#820808") +
   coord_flip() +
   labs(
-    title = "Inferencia Visual: Consumo de Alcohol por Región (2015-2019)",
+    title = "Inferencia Visual: Consumo de Alcohol por Región",
     subtitle = "Intervalos de Confianza (95%) Agregados",
     x = "Macro-Región", y = "Litros de Alcohol Puro APC",
     caption = "Fuente: Análisis basado en alcohol_data.csv"
