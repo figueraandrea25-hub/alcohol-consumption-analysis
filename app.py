@@ -121,3 +121,98 @@ def macro_region_ci(df):
 # Encabezado del dashboard 
 st.title("Dashboard de Consumo de Alcohol (2015–2019)")
 st.caption("Analisis de datos critico sobre la incertidumbre como una variable fundamental para ser presentada a la sociedad.")
+
+# Carga final de la base para analizar
+
+try:
+    df = prepare_data(load_data())
+except Exception as e:
+    st.error("No fue posible cargar la base de datos.")
+    st.error(f"Detalle: {e}")
+    st.stop()
+
+# Versión sucia vs limpia para mostrar el impacto de la limpieza de datos
+dirty, recovered = make_dirty_versions(df)
+
+# Filtros generales para el dashboard
+st.sidebar.header("Filtros")
+year_range = st.sidebar.slider("Años", 2015, 2019, YEARS)
+selected_regions = st.sidebar.multiselect("Regiones", REGION_ORDER, default=REGION_ORDER)
+
+df = df[df["YEAR"].between(*year_range) & df["REGION"].isin(selected_regions)]
+dirty = dirty[dirty["YEAR"].between(*year_range) & dirty["REGION"].isin(selected_regions)]
+recovered = recovered[recovered["YEAR"].between(*year_range) & recovered["REGION"].isin(selected_regions)]
+
+if df.empty:
+    st.warning("No hay datos para los filtros seleccionados.")
+    st.stop()
+
+# Metricas de la muestra filtrada 
+m1, m2, m3, m4 = st.columns(4)
+m1.metric("Registros", f"{len(df):,}")
+m2.metric("Países", df["COUNTRY"].nunique())
+m3.metric("Promedio global", f"{df['ALCOHOL_LITERS_PER_CAPITA'].mean():.2f}")
+m4.metric("Mediana global", f"{df['ALCOHOL_LITERS_PER_CAPITA'].median():.2f}")
+
+# Organizacion pestañas Dashboard
+tabs = st.tabs([
+    "Resumen general", "Data sucia vs limpia", "Mediana", "Estadísticas regionales",
+    "Dos países", "Intervalos por región", "Asimetría regional",
+    "Macro-regiones IC 95%", "Top 10 países", "Consumo por año"
+])
+
+# Pestaña resumen general con tabla y grafico 
+with tabs[0]:
+    st.subheader("Panorama general")
+    rs = region_summary(df)
+    fig = px.bar(rs, x="REGION", y="Promedio", color="REGION", color_discrete_map=REGION_COLORS, text_auto=".2f", title="Promedio de consumo por región")
+    fig.update_layout(showlegend=False)
+    st.plotly_chart(style(fig), use_container_width=True)
+    st.dataframe(rs.style.format({"Promedio": "{:.2f}", "Mediana": "{:.2f}", "Desv_Est": "{:.2f}", "Incertidumbre": "{:.2f}"}), use_container_width=True)
+
+# Pestaña Data sucia vs limpia (Tabla y grafico)
+with tabs[1]:
+    st.subheader("Comparación de data sucia vs limpia")
+    comparison = pd.DataFrame({
+        "Estado": ["Limpia", "Sucia", "Recuperada"],
+        "Registros": [len(df), len(dirty), len(recovered)],
+        "Media": [df["ALCOHOL_LITERS_PER_CAPITA"].mean(), dirty["ALCOHOL_LITERS_PER_CAPITA"].mean(skipna=True), recovered["ALCOHOL_LITERS_PER_CAPITA"].mean()],
+        "Mediana": [df["ALCOHOL_LITERS_PER_CAPITA"].median(), dirty["ALCOHOL_LITERS_PER_CAPITA"].median(skipna=True), recovered["ALCOHOL_LITERS_PER_CAPITA"].median()]
+    })
+    st.dataframe(comparison.style.format({"Media": "{:.2f}", "Mediana": "{:.2f}"}), use_container_width=True)
+    fig = px.bar(comparison.melt(id_vars="Estado", value_vars=["Media", "Mediana"], var_name="Indicador", value_name="Valor"),
+                 x="Estado", y="Valor", color="Indicador", barmode="group", title="Comparación de media y mediana")
+    st.plotly_chart(style(fig), use_container_width=True)
+
+# Analisis de media y mediana con el fin de evaluar la robustez del estimador centra por region 
+with tabs[2]:
+    st.subheader("Contraste entre media y mediana")
+    med = region_summary(df)[["REGION", "Promedio", "Mediana"]].copy()
+    med["Sesgo_%"] = ((med["Promedio"] - med["Mediana"]) / med["Mediana"]) * 100
+    fig = px.bar(med.melt(id_vars="REGION", value_vars=["Promedio", "Mediana"], var_name="Medida", value_name="Valor"),
+                 x="REGION", y="Valor", color="Medida", barmode="group", title="Promedio vs mediana por región")
+    st.plotly_chart(style(fig), use_container_width=True)
+    st.dataframe(med.style.format({"Promedio": "{:.2f}", "Mediana": "{:.2f}", "Sesgo_%": "{:.2f}"}), use_container_width=True)
+
+# Graficos de promedio, mediana, desviacion estandar e incertidumbre ( Estadisticas regionales)
+with tabs[3]:
+    st.subheader("Estadísticas por región")
+    rs = region_summary(df)
+    c1, c2 = st.columns(2)
+    c3, c4 = st.columns(2)
+    with c1:
+        fig = px.bar(rs, x="REGION", y="Promedio", color="REGION", color_discrete_map=REGION_COLORS, title="Promedio")
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(style(fig, 350), use_container_width=True)
+    with c2:
+        fig = px.bar(rs, x="REGION", y="Mediana", color="REGION", color_discrete_map=REGION_COLORS, title="Mediana")
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(style(fig, 350), use_container_width=True)
+    with c3:
+        fig = px.bar(rs, x="REGION", y="Desv_Est", color="REGION", color_discrete_map=REGION_COLORS, title="Desviación estándar")
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(style(fig, 350), use_container_width=True)
+    with c4:
+        fig = px.bar(rs, x="REGION", y="Incertidumbre", color="REGION", color_discrete_map=REGION_COLORS, title="Incertidumbre")
+        fig.update_layout(showlegend=False)
+        st.plotly_chart(style(fig, 350), use_container_width=True)
