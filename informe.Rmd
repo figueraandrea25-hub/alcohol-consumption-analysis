@@ -40,7 +40,7 @@ output:
     toc: yes
     df_print: paged
 abstract: |
- En el presente informe se realiza un análisis del impacto de los valores atípicos y la incertidumbre estadística en las estimaciones del consumo global de alcohol (2015-2019). Se examina la robustez del promedio frente a la mediana y se evalúa la precisión de los intervalos de confianza mediante el análisis de solapamiento regional, aplicando técnicas de limpieza de datos, truncamiento por percentiles y visualización de densidades con R.
+ En el presente informe se realiza un análisis del impacto de los valores atípicos y la incertidumbre estadística en las estimaciones del consumo global de alcohol (2015-2019). Se examina la robustez del promedio frente a la mediana y se evalúa la precisión de los intervalos de confianza mediante el análisis de solapamiento regional, aplicando técnicas de limpieza de datoS, truncamiento por percentiles y visualización de densidades con R.
 ---
 
 ```{r setup, include=FALSE}
@@ -64,29 +64,30 @@ library(scales)
 
 \chapter*{Introducción}
 
-El análisis de las tendencias globales de salud ha cobrado una relevancia sin precedentes en el diseño de políticas públicas, donde el consumo de alcohol se posiciona como una de las variables más críticas debido a su impacto directo en la carga de morbilidad y la estabilidad socioeconómica de las naciones. Sin embargo, detrás de los reportes anuales, la medición del consumo per cápita se caracteriza por una alta incertidumbre estocástica: la ingesta registrada no es una cifra estática, sino el resultado de una compleja interacción entre factores culturales, marcos regulatorios y la calidad de los sistemas de recolección de datos de cada país.
+El análisis de las tendencias globales de salud ha cobrado una relevancia sin precedentes en el diseño de políticas públicas, donde el consumo de alcohol se posiciona como una de las variables más críticas debido a su impacto directo en la carga de morbilidad y la estabilidad socioeconómica de las naciones. Sin embargo, detrás de los reportes anuales, la medición del consumo per cápita se caracteriza por una alta incertidumbre aleatoria: la ingesta registrada no es una cifra estática, sino el resultado de una compleja interacción entre factores culturales, marcos regulatorios y la calidad de los sistemas de recolección de datos de cada país.
 
 Para el profesional en Estadística, este escenario presenta un desafío metodológico fundamental: ¿Cómo influyen los valores atípicos y el sesgo de la muestra en la representatividad de los promedios globales? ¿Es posible confiar en las estimaciones puntuales cuando la varianza regional es tan pronunciada?
 
-El presente trabajo de investigación tiene como propósito realizar un análisis estadístico exhaustivo sobre el conjunto de datos de consumo global de alcohol (2015-2019). A través del uso de herramientas computacionales avanzadas en R y técnicas de visualización de densidades, se busca evaluar el impacto de los outliers sobre el promedio y los intervalos de confianza. El estudio aplica protocolos de limpieza de datos (ETL) y algoritmos de truncamiento por percentiles (P90) para descomponer la variabilidad de los datos, permitiendo una interpretación más robusta y técnica de la incertidumbre inherente a este indicador de salud global.\
+El presente trabajo de investigación tiene como propósito realizar un análisis estadístico exhaustivo sobre el conjunto de datos de consumo global de alcohol (2015-2019). A través del uso de herramientas computacionales avanzadas en R y técnicas de visualización de densidades, se busca evaluar el impacto de los outliers sobre el promedio y los intervalos de confianza. El estudio aplica protocolos de limpieza de datos y algoritmos de truncamiento por percentiles (P90) como una herramienta de análisis de sensibilidad. Este procedimiento permite cuantificar el impacto específico de los valores extremos sobre la media global, evidenciando cómo el 10% de las observaciones con mayor consumo desplaza el centro de la distribución. Al contrastar la muestra íntegra con la truncada, se logra descomponer la variabilidad y ofrecer una interpretación más técnica de la incertidumbre, reconociendo el peso que tienen los outliers en la representatividad de los indicadores de salud global.
 
 \section*{Estructura del Informe}
 
 Este documento técnico se encuentra estructurado en cinco capítulos fundamentales que guían el análisis desde la formulación teórica hasta la resolución computacional:
+
 
 \begin{itemize}
 \item En el \textbf{Capítulo I}, se plantea la problemática del impacto de los valores extremos en la salud pública, formulando las preguntas de investigación sobre la representatividad del promedio y delimitando el alcance del estudio al periodo 2015-2019.
 
     \item El \textbf{Capítulo II} establece el Marco Teórico-Estadístico, definiendo conceptos críticos como la asimetría de las distribuciones, la robustez de los estimadores puntuales (media vs. mediana) y la teoría detrás de los intervalos de confianza.
 
-    \item El \textbf{Capítulo III} describe el Marco Metodológico y Computacional, detallando el protocolo de extracción, transformación y carga (ETL) en \textbf{R}, así como la implementación del algoritmo de truncamiento por el percentil 90 (P90) para el control de la varianza.
+    \item El \textbf{Capítulo III} describe el Marco Metodológico y Computacional, detallando el protocolo de limpieza y carga en \textbf{R}, así como la implementación del algoritmo de truncamiento por el percentil 90 (P90) para el control de la varianza.
 
     \item El \textbf{Capítulo IV} presenta el Análisis de Resultados, donde se exhiben los contrastes entre la muestra original y la truncada, utilizando visualizaciones de densidad y tablas comparativas que evidencian el solapamiento de la incertidumbre regional.
 
     \item Finalmente, en el \textbf{Capítulo V}, se exponen las Conclusiones derivadas del análisis cuantitativo, evaluando la eficacia de las medidas robustas para la toma de decisiones en políticas sanitarias y la gestión de riesgos basada en datos.
 \end{itemize}
 
-Este reporte no solo ofrece una radiografía del consumo global de alcohol, sino que propone una metodología reproducible para el tratamiento de datos atípicos en investigaciones sociodemográficas complejas.\
+Este reporte no solo ofrece una radiografía del consumo global de alcohol, sino que propone una metodología reproducible para el tratamiento de datos atípicos en investigaciones sociodemográficas complejas.
 
 \chapter{Planteamiento del Problema}
 Cuando se habla del consumo de alcohol al nivel mundial, los resultados de un análisis generalmente son presentados según qué tan por encima o por debajo esté el promedio de cierta población estudiada en relación con el **indicador transversal** utilizado por la Organización Mundial de la Salud (OMS). El consumo de alcohol per cápita es un tema en el que se evalúa el riesgo y el punto donde el consumo se categoriza como un tema crítico para la salud pública, al momento de determinarlo se choca directamento con el **reduccionismo estadístico**, el cual hace referencia al como la interpretación de los datos viene presentada bajo **indicadores** estadísticos que buscan reducir la realidad objetiva de poblaciones enteras a un simple promedio [@who2018alcohol]. 
@@ -145,7 +146,6 @@ Esta delimitación es clave: el valor agregado de este trabajo radica en la capa
 
 **Relevancia Social y Ética**
 Socialmente, el trabajo se justifica al exponer cómo el reduccionismo estadístico puede ser utilizado para construir narrativas que ocultan crisis sanitarias reales. Al procesar los intervalos de confianza, valores atípicos y los datos faltantes presentes en el dataset, se busca demostrar que un promedio nacional "limpio" puede ser el resultado de sistemas de registro deficientes, permitiendo que se ignore deliberadamente a los sectores con consumos problemáticos. 
-
  Identificar vulnerabilidades ocultas, a la hora de tomar decisiones y entender el ancho de la incertidumbre permite reconocer en qué regiones la recolección de datos es deficiente o dónde el consumo es tan dispar que un promedio bajo no garantiza la ausencia de riesgos. Esto permite transitar de una política basada en cifras generales a una basada en la realidad de los intervalos, protegiendo así a los sectores poblacionales que quedan invisibilizados en los reportes tradicionales.
  
 Así la presente investigación se plantea por la necesidad imperativa de dotar a la salud pública de herramientas de análisis que trasciendan la interpretación superficial de los datos. En un contexto global donde la información estadística es utilizada con frecuencia para validar narrativas políticas, este estudio aporta un marco crítico que devuelve la importancia a la **variabilidad e incertidumbre** como componentes esenciales de la verdad científica.
@@ -377,7 +377,7 @@ aplicar_estilo_tabla(tabla_muestra, "Muestra de los Datos de Consumo Procesados"
 
 \subsection{Análisis Comparativo del Impacto de la Limpieza de Datos}
 
-En concordancia con el **Objetivo 1** de la investigación, y siguiendo la rigurosidad metodológica de estudios descriptivos previos, se realizó un análisis comparativo para evaluar estadísticamente el impacto del proceso de Extracción, Transformación y Carga sobre el conjunto de datos. No se debe proceder a la eliminación ciega de registros sin comprender la naturaleza y el sesgo potencial que esto introduce en la muestra final.
+En concordancia con el **Objetivo 1** de la investigación, y siguiendo la rigurosidad metodológica de estudios descriptivos previos, se realizó un análisis comparativo para evaluar estadísticamente el impacto del proceso de Limpieza y Carga sobre el conjunto de datos. No se debe proceder a la eliminación ciega de registros sin comprender la naturaleza y el sesgo potencial que esto introduce en la muestra final.
 
 El procedimiento metodológico consistió en:
 
@@ -387,7 +387,7 @@ El procedimiento metodológico consistió en:
 
 3.  **Evaluación de Sesgo:** La comparación de la media y la mediana pre y post limpieza permite identificar si la eliminación de registros con valores nulos (`NA`) generó un cambio significativo en el promedio reportado, sugiriendo un sesgo sistemático en la recolección o reporte de datos a nivel global.
 
-```{r comparativo}
+```{r comparativo-de-limpieza}
 #análisis de impacto de la limpieza de los datos
 n_inicial <- raw_data_alcohol %>% filter(sex == "Both sexes", year %in% 2015:2019) %>% nrow()
 n_final   <- nrow(clean_data_alcohol)
@@ -409,15 +409,15 @@ tendencia_post <- clean_data_alcohol %>%
     Mediana = median(alcohol_liters_per_capita)
   )
 
-tabla_limpieza <- bind_rows(tendencia_pre, tendencia_post) %>%
+tabla_limpiieza <- bind_rows(tendencia_pre, tendencia_post) %>%
   mutate(Sesgo_Absoluto = Media - Mediana)
 
-aplicar_estilo_tabla(tabla_limpieza, "Comparación post-limpieza de los datos")
+aplicar_estilo_tabla(tabla_limpiieza, "Comparación post-limpieza de los datos")
 ``` 
 
 No se encontraron valores faltantes en la muestra seleccionada 
 
-\subsubsection{Simulación de Fallos y Validación del Protocolo limpieza}
+\subsubsection{Simulación de Fallos y Validación del Protocolo de Limpieza}
 
 Debido a la alta integridad de la fuente secundaria en el periodo 2015-2019, se realizó un experimento de control para validar la capacidad de respuesta del protocolo de limpieza. Este procedimiento consistió en inyectar artificialmente un 10% de ruido (valores NA) en una réplica de la muestra original.
 
@@ -440,7 +440,7 @@ validación_algoritmo <- data.frame(
 aplicar_estilo_tabla(validación_algoritmo, "Prueba de Estrés: Validación del Algoritmo de Depuración")
 ```
 
-\subsubsection{Protocolo de Recuperación}
+\subsubsection{Protocolo de Recuperación de Datos}
 
 Una vez generada la muestra con inconsistencias, se aplicó el algoritmo de depuración definido en el Objetivo 1. El proceso consiste en la identificación y eliminación automática de las filas contaminadas, garantizando que la base de datos resultante sea apta para el cálculo de solapamientos de intervalos de confianza.
 
@@ -554,7 +554,7 @@ El procedimiento metodológico se ejecutó bajo los siguientes pasos:
 
 **Validación de la Muestra Depurada**: Comparación de los estadísticos descriptivos (media, desviación estándar y valores máximos) para verificar la ganancia en homogeneidad.
 
-Como se detalla en la tabla adjunta, este ajuste metodológico permitió transitar de una muestra con alta dispersión a una muestra truncada (depurada), optimizada para la aplicación de técnicas de inferencia y regresión, asegurando que los resultados reflejen la tendencia del comportamiento global sin la interferencia de ruidos estadísticos atípicos.
+Como se detalla en la tabla adjunta, este ajuste metodológico permitió transitar de una muestra con alta dispersión a una muestra truncada (depurada).
 
 ```{r algoritmo-truncamiento-percentil}
 #definimos el límite: solo se queda el 90% de los datos con menor consumo
@@ -586,7 +586,8 @@ aplicar_estilo_tabla(tabla_comparativa, "Muestra Completa vs. Muestra Truncada (
 
 \subsubsection{Técnica de Comparación de Intervalos de Confianza y Regla de Decisión para el Consumo Regional}
 
-Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las pruebas paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:
+Para la ejecución de la técnica de comparación de intervalos, se desarrolló un algoritmo capaz de contrastar el límite superior de una región frente al límite inferior de otra. Esta metodología, fundamentada en la inferencia visual, permite dictaminar la existencia de brechas significativas en el consumo de alcohol sin las limitaciones de normalidad que exigen las prueba paramétricas tradicionales. A continuación, se detalla el procesamiento de los datos para la construcción de los indicadores de superposición regional:
+
 
 
 ```{r comparacion-intervalos-regional}
@@ -755,7 +756,7 @@ ggplot(resumen_grafico, aes(x = reorder(Region, Media), y = Media, color = Media
     legend.title = element_text(face = "bold")
   )
 ```
-\ El gráfico representa las medias muestrales de cada región mediante puntos, complementadas con barras de error que indican los Intervalos de Confianza (IC) al 95%. Adicionalmente, se emplea una escala de color divergente (de azul a rojo) que actúa como un refuerzo visual de la magnitud de la variable continua (nivel de consumo).
+ El gráfico representa las medias muestrales de cada región mediante puntos, complementadas con barras de error que indican los Intervalos de Confianza (IC) al 95%. Adicionalmente, se emplea una escala de color divergente (de azul a rojo) que actúa como un refuerzo visual de la magnitud de la variable continua (nivel de consumo).
 
 La inspección de las estimaciones puntuales (medias) revela una clara jerarquía en el consumo de alcohol a nivel global:
 Segmento de Alto Consumo: Liderado por Europa con la media más alta de 10.05 litros per cápita, seguida de cerca por América del Norte (9.68 litros) y Otras/Oceanía (8.79 litros).
@@ -772,9 +773,9 @@ Aislamiento de América Latina y el Caribe: El intervalo de confianza para esta 
 
 Agrupación Inferior (Sin diferencias significativas internas): De manera similar al bloque superior, los intervalos de confianza de África y Asia presentan un claro solapamiento. Por lo tanto, la diferencia observada entre sus medias (3.81 vs. 2.96) no es estadísticamente significativa; ambas regiones conforman un grupo homogéneo de bajo consumo.
 
-\section{Evaluación de la Incertidumbre mediante el Coeficiente de Pearson}
+\section{Evaluación de la Incertidumbre mediante el Coeficiente de Spearman}
 
-\ Para profundizar en el análisis de consistencia, se presenta a continuación un gráfico de dispersión que evalúa la asociación entre el consumo per cápita y la incertidumbre de la medición `(ci_width)`, estratificado por macro-regiones. Dado que los datos presentan una distribución asimétrica, se optó por el Coeficiente de Spearman, el cual resulta más robusto ante valores atípicos y relaciones no lineales. Esta visualización permite identificar la tendencia monótona global, así como los comportamientos diferenciales y la concentración de datos en grupos específicos de países
+ Para profundizar en el análisis de consistencia, se presenta a continuación un gráfico de dispersión que evalúa la asociación entre el consumo per cápita y la incertidumbre de la medición `(ci_width)`, estratificado por macro-regiones. Dado que los datos presentan una distribución asimétrica, se optó por el Coeficiente de Spearman, el cual resulta más robusto ante valores atípicos y relaciones no lineales. Esta visualización permite identificar la tendencia monótona global, así como los comportamientos diferenciales y la concentración de datos en grupos específicos de países
 
 ```{r grafico-por-region}
 #calculo del coeficiente de spearmam
@@ -815,4 +816,423 @@ ggplot(clean_data_alcohol, aes(x = alcohol_liters_per_capita, y = ci_width)) +
    ) +
 
   guides(color = guide_legend(nrow = 2, override.aes = list(alpha = 1, size = 3)))
+```
+ El gráfico presenta un diagrama de dispersión que evalúa la asociación monótona entre el volumen de consumo y la incertidumbre del reporte.
+
+   Coeficiente de Spearman (p=0.969): Este valor indica una asociación positiva casi perfecta. Al utilizar Spearman en lugar de Pearson, se valida que existe una relación jerárquica robusta: conforme aumenta el consumo, la incertidumbre crece de manera sistemática, incluso si esta relación no sigue una línea recta exacta o presenta una varianza no constante (heterocedasticidad).
+
+  Distribución por Macro-Regiones: Se observa una clara segmentación geográfica. Europa domina el cuadrante de alta incertidumbre y alto consumo, mientras que África y Asia muestran una mayor precisión estadística asociada a menores niveles de ingesta.
+
+  Análisis de la Variabilidad: El gráfico revela que la precisión del dato no es uniforme. La dispersión aumenta en los niveles altos de consumo, lo que justifica el uso de métodos no paramétricos (como Spearman), ya que Pearson habría subestimado la fuerza de la asociación al verse afectado por la mayor variabilidad en los extremos.
+
+  Conclusión Técnica: El valor de 0.969 confirma que la incertidumbre es una función intrínseca del volumen reportado. Esta consistencia tan alta sugiere que el error de medición es sistémico y no aleatorio, lo que refuerza la necesidad de tratar los datos de alto consumo con los ajustes de incertidumbre propuestos en este estudio.
+
+\section{Análisis de Valores Atípicos y su Impacto en los Promedios Regionales}
+
+Dado que las macro-regiones están compuestas por países con realidades socioeconómicas diversas, es imperativo evaluar cómo los valores atípicos influyen en los estadísticos de tendencia central. El uso de promedios simples puede verse distorsionado por naciones cuyo consumo per cápita es excepcionalmente alto o bajo en comparación con sus pares regionales. Para identificar estas asimetrías, se emplea un diagrama de caja y bigotes (Boxplot), que permite visualizar la mediana y los cuartiles, aislando los valores que se alejan significativamente del comportamiento grupal.
+
+```{r grafico-boxplot-final}
+regiones_ordenadas <- clean_data_alcohol %>%
+  group_by(Region) %>%
+  summarise(Media = mean(alcohol_liters_per_capita, na.rm = TRUE)) %>%
+  arrange(Media) %>%
+  pull(Region)
+
+#construcción del gráfico Pro :)
+ggplot(clean_data_alcohol, aes(x = factor(Region, levels = regiones_ordenadas), 
+                               y = alcohol_liters_per_capita)) +
+  
+  #guía visual de fondo 
+  geom_segment(aes(x = Region, xend = Region, y = 0, yend = max(alcohol_liters_per_capita, na.rm = TRUE)), 
+               color = "gray95", size = 5) +
+  
+  #puntos con Jitter y degradado pros
+  geom_jitter(aes(color = alcohol_liters_per_capita), 
+              width = 0.15, alpha = 0.4, size = 2) +
+  
+  #boxplot estilizado :)
+  geom_boxplot(fill = "white", color = "#1A5276", alpha = 0.7, 
+               outlier.color = "#800000", outlier.shape = 16, 
+               outlier.size = 2, width = 0.4) +
+  
+  #un diamante en el promedio
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 5, 
+               color = "#800000") +
+  
+  #escala de colores
+  scale_color_gradient(low = "#1A5276", high = "#800000") +
+  
+  #etiquetas 
+  labs(
+    title = "Asimetría y Valores Atípicos Regionales",
+    subtitle = "Distribución del Consumo | Comparativa Mediana (línea) vs. Promedio (diamante)",
+    x = NULL,
+    y = "Consumo Per Cápita (Litros)",
+    caption = "Nota: El desplazamiento del diamante respecto a la mediana indica el impacto de los valores extremos.",
+    color = "Litros"
+  ) +
+  
+  #personalizado pros :)
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, color = "#800000"),
+    plot.subtitle = element_text(size = 11, color = "gray30", margin = margin(b = 20)),
+    axis.text.x = element_text(face = "bold", size = 10, color = "black", angle = 30, hjust = 1),
+    axis.title.y = element_text(face = "bold", margin = margin(r = 15)),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "right"
+  )
+```
+Análisis de Asimetría y Valores Atípicos Regionales
+
+El gráfico presenta la distribución del consumo per cápita de alcohol por macro-región, destacando la relación entre la mediana (línea horizontal) y el promedio (diamante rojo), lo cual es el principal indicador de sesgo estadístico en la muestra.
+
+La distancia entre el diamante (media) y la línea interna de la caja (mediana) indica qué tan "engañoso" puede ser un reporte basado solo en promedios:
+
+África y Asia (Sesgo Positivo Extremo): En estas regiones, el diamante está significativamente por encima de la mediana. Esto ocurre porque la gran mayoría de los países tienen consumos muy bajos (cerca de 0-2 litros), pero existen unos pocos "outliers" con consumos altísimos (puntos granates de 12-16 litros) que arrastran el promedio hacia arriba.
+
+América del Norte y Europa (Simetría y Alta Densidad): En América del Norte, el promedio y la mediana casi coinciden, lo que indica una distribución uniforme. En Europa, el consumo es alto de forma generalizada; sin embargo, es la única región con outliers inferiores (puntos azules por debajo de la caja), lo que sugiere que hay un grupo pequeño de países europeos con políticas o culturas de consumo
+radicalmente distintas al resto del continente.
+
+Europa: Presenta la caja más alta en el eje Y, confirmando que es la región con el consumo base más elevado del mundo (el 75% de sus países consumen por encima de los 7 litros).
+
+América Latina y el Caribe: Muestra una dispersión moderada pero constante. Su caja es más compacta, lo que indica que, a pesar de las diferencias culturales, los niveles de consumo son relativamente similares entre sus países integrantes.
+
+África: Es la región con la mayor amplitud total (desde casi 0 hasta 16 litros), lo que demuestra que es la zona con mayor desigualdad estadística en sus hábitos de consumo.
+
+\section{Truncamiento de la Muestra y su Impacto en los Promedios Regionales}
+
+El truncamiento al P90 no se propone como un reemplazo de la muestra original, sino como un diagnóstico de sensibilidad. La variación observada al excluir solo el 10% superior confirma que la media aritmética es un estimador ineficiente para esta distribución, validando así la necesidad de utilizar la mediana o métodos no paramétricos para el análisis regional.
+
+```{r grafico-comparativo-medias-corregido, fig.height=6, fig.width=9}
+#calculos
+media_completa <- mean(clean_data_alcohol$alcohol_liters_per_capita, na.rm = TRUE)
+media_truncada <- mean(muestra_truncada_p90$alcohol_liters_per_capita, na.rm = TRUE)
+
+#datos 
+datos_largos <- bind_rows(
+  clean_data_alcohol %>% mutate(Grupo = "1. Muestra Completa (n=940)"),
+  muestra_truncada_p90 %>% mutate(Grupo = "2. Muestra Truncada (n=846)")
+)
+
+#tablita usando 2 decimales
+datos_medias <- data.frame(
+  Grupo = c("1. Muestra Completa (n=940)", "2. Muestra Truncada (n=846)"),
+  MediaVal = c(media_completa, media_truncada),
+  Etiqueta = paste("Media:", round(c(media_completa, media_truncada), 2))
+)
+
+#grafica
+ggplot(datos_largos, aes(x = Grupo, y = alcohol_liters_per_capita, fill = Grupo)) +
+  geom_violin(trim = FALSE, alpha = 0.2, color = NA) +
+  #botblox central
+  geom_boxplot(width = 0.25, color = "#800000", alpha = 0.6, outlier.shape = NA) +
+  #diamante en la media
+  geom_point(data = datos_medias, aes(x = Grupo, y = MediaVal), 
+             color = "#800000", shape = 18, size = 5) +
+  #etiqueta para los numeros
+  geom_text(data = datos_medias, aes(x = Grupo, y = MediaVal + 0.5, label = Etiqueta), 
+            color = "#800000", fontface = "bold", size = 4.5) +
+  scale_fill_manual(values = c("#FADBD8", "#A9CCE3")) + #colores
+  
+  labs(title = "Impacto del Truncamiento P90 en la Tendencia Central",
+       subtitle = "Reducción del sesgo por valores atípicos superiores",
+       x = NULL, y = "Consumo (Litros/Cápita)") +
+  
+  theme_minimal(base_size = 11) +
+  theme(
+    panel.background = element_rect(fill = "#FFF5F5", color = NA),
+    plot.background = element_rect(fill = "#FFF5F5", color = NA),
+    legend.position = "none",
+    plot.title = element_text(face = "bold", color = "#800000", size = 14),
+    axis.text.x = element_text(face = "bold", color = "#333333"),
+    panel.border = element_rect(color = "#800000", fill = NA, size = 1.2),
+    panel.grid.major = element_line(color = "gray90")
+  )
+```
+Este gráfico permite visualizar el éxito de la limpieza de datos. En la muestra original, la "cola" de la distribución se extendía demasiado hacia arriba, lo que hacía que el promedio (la media) se situara en 5.50 litros, una cifra que no representaba a la mayoría de los países. Al aplicar el truncamiento del 10% superior, logramos una distribución más equilibrada donde la media bajó a 4.71 litros.
+
+ La limpieza eliminó el "ruido" de los países con consumos extremos, permitiendo que el promedio ahora sí sea un reflejo fiel de la realidad global.
+    
+```{r grafico-boxplot-truncado}
+#calculamos 
+regiones_ordenadas_p90 <- muestra_truncada_p90 %>%
+  group_by(Region) %>%
+  summarise(Media = mean(alcohol_liters_per_capita, na.rm = TRUE)) %>%
+  arrange(Media) %>%
+  pull(Region)
+
+#grafico
+ggplot(muestra_truncada_p90, aes(x = factor(Region, levels = regiones_ordenadas_p90), 
+                                 y = alcohol_liters_per_capita)) +
+  geom_segment(aes(x = Region, xend = Region, y = 0, yend = max(alcohol_liters_per_capita, na.rm = TRUE)), 
+               color = "gray95", size = 5) +
+  
+  #puntos con Jitter 
+  geom_jitter(aes(color = alcohol_liters_per_capita), 
+              width = 0.15, alpha = 0.4, size = 2) +
+  
+  #boxplot estilizado 
+  geom_boxplot(fill = "white", color = "#1A5276", alpha = 0.7, 
+               outlier.shape = NA, # Ya no debería haber outliers según el nuevo P90
+               width = 0.4) +
+  
+  
+  stat_summary(fun = mean, geom = "point", shape = 18, size = 5, 
+               color = "#800000") +
+  scale_color_gradient(low = "#1A5276", high = "#800000") +
+  
+  #etiquetas
+  labs(
+    title = "Distribución Regional del Consumo (Muestra Depurada P90)",
+    subtitle = "Análisis de tendencia central sin sesgo de valores extremos",
+    x = NULL,
+    y = "Consumo Per Cápita (Litros)",
+    caption = "Nota: El diamante (promedio) se observa más alineado a la mediana tras el truncamiento del 10% superior.",
+    color = "Litros"
+  ) +
+  
+  #estetica pro
+  theme_minimal(base_size = 12) +
+  theme(
+    plot.title = element_text(face = "bold", size = 16, color = "#800000"),
+    plot.subtitle = element_text(size = 11, color = "gray30", margin = margin(b = 20)),
+    axis.text.x = element_text(face = "bold", size = 10, color = "black", angle = 30, hjust = 1),
+    axis.title.y = element_text(face = "bold", margin = margin(r = 15)),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor = element_blank(),
+    legend.position = "right"
+  )
+```
+Impacto del Truncamiento en la Tendencia Central
+El primer gráfico (Boxplot comparativo) es una prueba clara de la sensibilidad de la media aritmética ante valores extremos.
+Reducción del Sesgo: Al eliminar el 10% de los países con mayor consumo (pasando de n=940 a n=846), la media descendió de 5.50 a 4.71 litros per cápita. Esta diferencia de 0.79 litros parece pequeña, pero a escala poblacional representa una magnitud masiva de alcohol no consumido por el ciudadano "promedio".
+
+Contracción de la Variabilidad: La "cola" superior se redujo drásticamente (de casi 18 litros a 12 litros). Esto indica que el modelo original estaba siendo "arrastrado" hacia arriba por un grupo pequeño de países con consumos hiper-elevados, lo que generaba una falsa percepción de la normalidad global.
+
+Convergencia Media-Mediana: En la muestra truncada, el diamante (media) se acerca mucho más a la línea central de la caja (mediana). Esto es un indicador de que la distribución, aunque sigue siendo asimétrica, es ahora mucho más manejable y menos errática para realizar inferencias.
+
+2. Distribución Regional (Muestra Depurada P90)
+
+El segundo gráfico combina diagramas de caja con "jitter" (puntos individuales), permitiéndonos ver la densidad real de los datos tras la limpieza.
+
+El "Espejismo" de la Normalidad: A pesar del truncamiento, el gráfico confirma que el consumo de alcohol no sigue una distribución normal en casi ninguna región.
+
+Heterogeneidad Regional Extrema:
+Europa y Otras/Oceanía: Muestran cajas situadas en la parte alta del eje Y (consumo masivo). En Europa, incluso tras quitar el P90, la mayoría de los países consumen entre 7 y 10 litros.
+África y Asia: Presentan una base muy ancha en los niveles bajos (puntos azules cerca del cero), pero con "colas" largas hacia arriba. Aquí, la media (diamante) está notablemente por encima de la mediana, lo que indica que una minoría de países en estas regiones consume mucho más que el resto.
+
+América del Norte: Presenta una dispersión casi nula en este gráfico, lo que sugiere que los datos para esta región están muy concentrados o que el número de unidades de observación tras el truncamiento es muy bajo, actuando casi como una constante.
+
+\chapter{Conclusiones y Recomendaciones}
+
+\textbf{1.-} El consumo de alcohol no sigue una distribución normal (Gaussiana) a nivel global ni en la mayoría de las regiones. Tratar los datos asumiendo normalidad llevaría a errores inferenciales.
+
+Europa lidera el consumo, siendo la única región donde la distribución masiva de los datos se agrupa en el extremo superior de la escala de consumo.
+
+\textbf{Recomendación}
+ Dado el fuerte sesgo en Asia, África y Europa, la Mediana es el indicador estadístico más robusto y representativo para comparar la tendencia central típica entre estas regiones, ya que no se ve afectada por los valores extremos observados en las colas de densidad.
+
+\textbf{Recomendación} 
+No se acosenja utilizar la "Media" para describir a América Latina y el Caribe u Oceanía en reportes ejecutivos. Al ser bimodales, afirmar que el país promedio consume "X" litros es una falacia ecológica; es mejor reportar que existen dos perfiles de consumo distintos en dichas zonas.
+
+\textbf{2.-} El análisis de los datos del período 2015-2019 permite segmentar el mundo en tres grupos estadísticamente diferenciados respecto a su consumo per cápita de alcohol puro: un grupo de alto consumo (Europa, América del Norte y Oceanía), un grupo de consumo moderado (América Latina y el Caribe) y un grupo de bajo consumo (África y Asia). Las variaciones dentro de cada grupo se consideran producto de la variabilidad muestral o aleatoria, mientras que las variaciones entre los grupos representan diferencias poblacionales reales y significativas
+
+
+\textbf{Recomendación} 
+1. Estratificación de Políticas por Grupo Regional
+
+Se recomienda que las organizaciones globales de salud (como la OMS/OPS) no apliquen estrategias genéricas de control de consumo.
+
+   Para el Grupo de Alto Consumo (Europa, Norteamérica, Oceanía): Dado que la diferencia entre sus medias no es significativa, se pueden estandarizar campañas transnacionales centradas en la reducción de daños crónicos, ya que el comportamiento de consumo es homogéneo y estructuralmente elevado.
+
+   Para el Grupo de Bajo Consumo (África, Asia): El enfoque debe ser preventivo para evitar el desplazamiento de la media hacia niveles superiores debido a la apertura de mercados y cambios demográficos.
+
+2. Monitoreo Especial de la Incertidumbre en LATAM
+
+Dada la posición aislada de América Latina y el Caribe en la escala global, se recomienda fortalecer los sistemas de vigilancia epidemiológica locales.
+
+   Es vital reducir el ancho de los intervalos de confianza (ci_width) en esta región, ya que su bimodalidad (detectada en el análisis de densidad) sugiere que los promedios regionales podrían estar ocultando realidades críticas en países específicos que no se ajustan al "grupo moderado".
+
+3. Mejora en la Precisión de Reportes (Incertidumbre Técnica)
+
+Una recomendación metodológica clave es incentivar la transición de reportes basados en estimaciones a reportes basados en registros administrativos reales.
+
+  Se observa que las regiones con mayor sesgo (como Asia) suelen coincidir con una mayor variabilidad en la precisión de los datos. Reducir la incertidumbre técnica permitirá que los grupos identificados en este estudio sean aún más precisos en futuras investigaciones.
+
+4. Uso de la Mediana como Indicador de Seguimiento
+
+Para futuros análisis de estos mismos datos, se recomienda adoptar la Mediana como indicador oficial de comparación para los grupos de África y Asia.
+
+  Debido al sesgo positivo detectado, el uso de la media sobreestima el consumo del "país típico" en esas zonas, lo que podría llevar a una asignación ineficiente de recursos para la salud.
+
+\textbf{3.-} Europa no solo lidera el consumo, sino que es la región que define la pendiente de la incertidumbre global en este estudio.
+
+\textbf{Recomendación} Se recomienda investigar los puntos que se alejan significativamente de la media (especialmente en el rango de 8 a 12 litros) para entender por qué algunos países tienen mucha más incertidumbre que otros con el mismo nivel de consumo.
+
+Se debe mejorar la precisión de los sistemas de registro en Europa y América del Norte, ya que la alta incertidumbre (ci_width elevado) puede estar ocultando picos de consumo aún mayores o subestimando el impacto real.
+
+No aplicar una métrica global única. Las estrategias para la "Agrupación Inferior" (África/Asia) deben enfocarse en mantener los niveles bajos, mientras que en la "Agrupación Superior" se requiere una intervención urgente para reducir tanto el consumo como el margen de error en los datos.
+
+\textbf{4.-} Correlación entre Consumo e Incertidumbre: Se evidencia que la precisión de las estimaciones es inversamente proporcional al volumen de consumo. El análisis de los intervalos de confianza ($ci\_width$) confirma la presencia de heterocedasticidad: a mayor consumo per cápita, mayor es la varianza residual. Esto implica que los datos en regiones de alta ingesta presentan una volatilidad estructural que los indicadores puntuales no logran capturar.
+
+\textbf{5.-} El Impacto de los Valores Atípicos: La aplicación de la media truncada al 90% reveló que el "ruido" estadístico en las colas de la distribución no es despreciable. Mientras que el truncamiento estabiliza la varianza y facilita la comparación entre regiones, la persistencia de estos outliers en Europa sugiere que existen factores socioculturales que desafían los modelos de predicción lineal estándar, requiriendo un enfoque de estadística robusta.
+
+\textbf{Recomendación} 
+Comunicación de la Incertidumbre: Se sugiere que en las presentaciones de resultados para entes de salud pública, no se utilicen gráficos de barras simples. En su lugar, es imperativo el uso de gráficos de densidad o de violín que incluyan el reporte explícito de los intervalos de confianza, evitando así la "falacia de la precisión" y reconociendo el margen de error inherente al dato epidemiológico.
+
+\appendix
+\renewcommand{\thechapter}{\Alph{chapter}}
+
+\chapter{Anexo Diagnóstico de la Influencia de Valores Atípicos}
+
+Para evidenciar estadísticamente la presencia de valores atípicos que distorsionan el promedio regional, se presenta como anexo un modelo de regresión de la incertidumbre. El gráfico de Residuos vs Ajustados permite identificar a aquellos países (outliers) que se alejan de la varianza normal. 
+
+$$ \text{ci\_width} = \beta_0 + \beta_1(\text{Consumo\_Per\_Capita}) + \epsilon $$
+```{r grafico-residuos-region, fig.height=6, fig.width=9}
+#datos
+modelo_consistencia <- lm(ci_width ~ alcohol_liters_per_capita, data = clean_data_alcohol)
+
+#extremos y para evitar errores
+ajustados <- fitted(modelo_consistencia)
+residuos <- residuals(modelo_consistencia)
+
+#para los colores lidix
+paleta_ecca <- c("#800000", "#1A5276", "#5B2C6F", "#7D3C98", "#2E86C1", "#1B4F72")
+regiones <- as.factor(clean_data_alcohol$Region)
+colores_puntos <- paleta_ecca[as.numeric(regiones)]
+
+#configuracion del area
+par(mar = c(5, 5, 4, 10), xpd = TRUE)
+
+#grafico
+plot(ajustados, residuos,
+     main = "Análisis de Residuos por Región",
+     xlab = "Valores Ajustados (Predicción)",
+     ylab = "Residuos (Error)",
+     col = colores_puntos, 
+     pch = 16, 
+     cex = 1.2,
+     col.axis = "#800000",  
+     col.lab = "#800000",   
+     fg = "#800000",
+     frame.plot = FALSE) #sin el marco
+
+#agg la linea de referencia
+abline(h = 0, lty = 2, col = "gray")
+
+#borde
+box(col = "#800000", lwd = 2)
+
+legend("topright", 
+       inset = c(-0.42, 0), 
+       legend = levels(regiones), 
+       fill = paleta_ecca, 
+       title = "Macro-Regiones",
+       bty = "n", 
+       cex = 0.8)
+```
+
+```{r grafico-qqplot-region, fig.height=6, fig.width=9}
+#extraemos los residuos estandarizados
+residuos_std <- rstandard(modelo_consistencia)
+# Calculamos los cuantiles teóricos de la distribución normal
+orden <- order(residuos_std)
+n <- length(residuos_std)
+cuantiles_teoricos <- qnorm(ppoints(n))[order(orden)]
+
+# Usamos la misma paleta y regiones que el gráfico anterior
+paleta_ecca <- c("#800000", "#1A5276", "#5B2C6F", "#7D3C98", "#2E86C1", "#1B4F72")
+regiones <- as.factor(clean_data_alcohol$Region)
+colores_puntos <- paleta_ecca[as.numeric(regiones)]
+
+par(mar = c(5, 5, 4, 10), xpd = TRUE) #cofiguracion de area
+
+#grafico de normalidad
+plot(cuantiles_teoricos, residuos_std,
+     main = "Normal Q-Q Plot por Región",
+     xlab = "Cuantiles Teóricos",
+     ylab = "Residuos Estandarizados",
+     col = colores_puntos, 
+     pch = 16, 
+     cex = 1.2,
+     col.axis = "#800000",  
+     col.lab = "#800000",   
+     fg = "#800000",
+     frame.plot = FALSE)
+
+#linea diagonal de ref
+abline(0, 1, lty = 2, col = "gray")
+#borde de color 
+box(col = "#800000", lwd = 2)
+
+legend("topright", 
+       inset = c(-0.42, 0), 
+       legend = levels(regiones), 
+       fill = paleta_ecca, 
+       title = "Macro-Regiones",
+       bty = "n", 
+       cex = 0.8)
+```
+
+\chapter{Ranking de Países por Incertidumbre de Reporte}
+En este anexo se presenta el listado desglosado de los 20 países que presentan los mayores niveles de incertidumbre en la estimación del consumo (ci_width), permitiendo auditar los valores atípicos ("Outliers") que definen la dispersión observada en el análisis regional.
+
+```{r}
+top_incertidumbre <- clean_data_alcohol %>%
+  select(country, Region, alcohol_liters_per_capita, ci_width) %>%
+  arrange(desc(ci_width)) %>%
+  head(20)
+
+kable(top_incertidumbre, 
+      format = "latex", 
+      booktabs = TRUE, 
+      col.names = c("País", "Macro-Región", "Consumo", "Ancho Intervalo"),
+      caption = "Top 20 Países con Mayor Incertidumbre Estadística") %>%
+  kable_styling(
+    latex_options = c("striped", "scale_down", "hold_position"), 
+    font_size = 10
+  )
+```
+
+\chapter{Visualización de Densidad de Datos por Región}
+
+Para complementar el análisis de consistencia técnica, se presenta un mapa de calor que cruza la Región Geográfica con los niveles de consumo. La intensidad del color representa la densidad de países en cada segmento, facilitando la identificación de los grupos de bajo y alto consumo.
+
+``` {r}
+#se agrupa por región y promedio de consumo 
+heatmap_alcohol <- clean_data_alcohol %>%
+  mutate(Consumo_Bin = cut(alcohol_liters_per_capita, breaks = 5)) %>%
+  group_by(Region, Consumo_Bin) %>%
+  summarise(N_Paises = n())
+
+ggplot(heatmap_alcohol, aes(x = Region, y = Consumo_Bin, fill = N_Paises)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "#f9ebea", high = "#922b21", name = "N° de Países") +
+  labs(x = "Macro-Región", y = "Rango de Consumo (Litros)", 
+       subtitle = "Densidad de países: Nótese el solapamiento en niveles bajos para África/Asia") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+\chapter{Identificación de Países con Consumo Extremo}
+
+Con el objetivo de profundizar en la transparencia del tratamiento de datos, este anexo presenta el listado detallado de las naciones que fueron excluidas de la muestra final tras la aplicación del algoritmo de truncamiento por el percentil 90 (P90).
+
+Estas observaciones representan el 10% de la muestra con mayores niveles de ingesta de alcohol per cápita (valores superiores a 11.25 litros). La tabla permite identificar que el sesgo original de la media (situada inicialmente en 5.50 litros) era producto de estos casos atípicos, cuya dispersión afectaba la representatividad del análisis regional. A continuación, se detallan los países, su región y el valor exacto de consumo registrado:
+
+```{r anexo-lista-excluidos}
+#identificamos los paises con valores atipicos
+lista_excluidos <- clean_data_alcohol %>%
+  anti_join(muestra_truncada_p90, by = "country") %>% # Ajusta si tu columna se llama 'Pais'
+  select(Region, country, alcohol_liters_per_capita) %>%
+  arrange(desc(alcohol_liters_per_capita)) #ordenados del más bebedor al menos
+
+#renombramos columnas
+colnames(lista_excluidos) <- c("Región", "País", "Consumo (L/Cápita)")
+
+#tabla 
+aplicar_estilo_tabla(lista_excluidos, 
+                     "Países Excluidos del Análisis por Consumo Extremo")
 ```
