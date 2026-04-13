@@ -23,7 +23,7 @@ Cuestionar la validez de las comparaciones tradicionales del consumo de alcohol 
 * Andrea Figuera.
 * Eduardo Espinoza. 
 
-###### Informe Dinámico con Rmarkdown: [Enlace próximamente]
+###### Informe Dinámico con Rmarkdown: [(https://rpubs.com/figueraandrea25/analisis-consumo-alcohol-ucv)]
 ###### Dashboard con Python: https://siracussa-npsfpqhza3jmzxueunpifr.streamlit.app/
 
 ![Static Badge](https://img.shields.io/badge/R-blue) ![Static Badge](https://img.shields.io/badge/Python-yellow) ![Static Badge](https://img.shields.io/badge/UCV-red)
