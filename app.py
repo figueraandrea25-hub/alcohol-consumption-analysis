@@ -89,3 +89,14 @@ def make_dirty_versions(df):
     recovered = dirty.dropna(subset=["ALCOHOL_LITERS_PER_CAPITA"]).copy()
     return dirty, recovered
 
+# Resumen de datos por región y año, calculando el promedio y la incertidumbre media
+def region_summary(df):
+    summary = df.groupby("REGION", as_index=False).agg(
+        Promedio=("ALCOHOL_LITERS_PER_CAPITA", "mean"),
+        Mediana=("ALCOHOL_LITERS_PER_CAPITA", "median"),
+        Desv_Est=("ALCOHOL_LITERS_PER_CAPITA", "std"),
+        Incertidumbre=("CI_WIDTH", "mean"),
+        Paises=("COUNTRY", "nunique"),
+    )
+    summary["REGION"] = pd.Categorical(summary["REGION"], categories=REGION_ORDER, ordered=True)
+    return summary.sort_values("REGION")
