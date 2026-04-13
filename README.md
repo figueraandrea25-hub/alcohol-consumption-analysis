@@ -24,6 +24,6 @@ Cuestionar la validez de las comparaciones tradicionales del consumo de alcohol 
 * Eduardo Espinoza. 
 
 ###### Informe Dinámico con Rmarkdown: [https://rpubs.com/figueraandrea25/analisis-consumo-alcohol-ucv]
-###### Dashboard con Python: https://siracussa-npsfpqhza3jmzxueunpifr.streamlit.app/
+###### Dashboard con Python: [https://alcohol-consumption-analysis-7ufkwcwaurxuszlo6ywal2.streamlit.app/]
 
 ![Static Badge](https://img.shields.io/badge/R-blue) ![Static Badge](https://img.shields.io/badge/Python-yellow) ![Static Badge](https://img.shields.io/badge/UCV-red)
