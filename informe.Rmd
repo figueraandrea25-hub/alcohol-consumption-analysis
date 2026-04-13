@@ -55,6 +55,10 @@ knitr::opts_chunk$set(
   out.extra = ""
 )
 
+options(knitr.table.format = function() {
+  if (knitr::is_latex_output()) "latex" else "html"
+})
+
 # Cargar librerías necesarias
 library(tidyverse)
 library(knitr)
@@ -314,27 +318,44 @@ El tratamiento de la fuente de datos `alcohol\_data.csv` se realizó siguiendo e
 4.  **Estratificación Geográfica (Creación de Variable Derivada):** Desarrollo de un algoritmo de recodificación (mediante `mutate()` y `case_when()`) para asignar a cada país su respectiva región geográfica (ej: "América Latina y el Caribe", "América del Norte", "Asia", "Europa", "África" y "Otras/Oceanía"), conveniente para el estudio.
 
 ```{r formato para las tablas}
-#configuración de estilo global para tablas
-options(knitr.table.format = "latex") 
-
-# estilo visual
+#creamos la funcion
 aplicar_estilo_tabla <- function(df, caption_text) {
-  df %>%
+  
+  #detectar si es pdf o html
+  is_latex <- knitr::is_latex_output()
+  
+  #configuracion
+  t <- df %>%
     kable(
-      booktabs = TRUE, 
+      #solo si_latex
+      booktabs = is_latex, 
+      longtable = is_latex,
       escape = TRUE,
-      longtable = TRUE,
       caption = caption_text,
       align = "c",
       col.names = gsub("_", " ", names(df)) %>% str_to_title()
-    ) %>%
-    kable_styling(
-      latex_options = c("striped", "hold_position", "repeat_header"),
-      full_width = FALSE,
-      stripe_color = "#F2D7D5" # Azul muy tenue para filas
-    ) %>%
-    row_spec(0, bold = TRUE, color = "white", background = "#800000") %>% # Encabezado Azul
-    column_spec(1, bold = TRUE)
+    )
+  
+  #estilos segun el formato de salida
+  if (is_latex) {
+    #para el PDF
+    t <- t %>%
+      kable_styling(
+        latex_options = c("striped", "hold_position", "repeat_header"),
+        full_width = FALSE,
+        stripe_color = "#F2D7D5"
+      ) %>%
+      row_spec(0, bold = TRUE, color = "white", background = "#800000") %>%
+      column_spec(1, bold = TRUE)
+  } else {
+    #para la WEB (HTML)
+    t <- t %>%
+      kable_styling(
+        bootstrap_options = c("striped", "hover", "condensed", "responsive"),
+        full_width = TRUE
+      )
+  }
+  return(t)
 }
 ```
 
@@ -1185,17 +1206,8 @@ top_incertidumbre <- clean_data_alcohol %>%
   arrange(desc(ci_width)) %>%
   head(20)
 
-kable(top_incertidumbre, 
-      format = "latex", 
-      booktabs = TRUE, 
-      col.names = c("País", "Macro-Región", "Consumo", "Ancho Intervalo"),
-      caption = "Top 20 Países con Mayor Incertidumbre Estadística") %>%
-  kable_styling(
-    latex_options = c("striped", "scale_down", "hold_position"), 
-    font_size = 10
-  )
+aplicar_estilo_tabla(top_incertidumbre, "Top 20 Países con Mayor Incertidumbre Estadística")
 ```
-
 \chapter{Visualización de Densidad de Datos por Región}
 
 Para complementar el análisis de consistencia técnica, se presenta un mapa de calor que cruza la Región Geográfica con los niveles de consumo. La intensidad del color representa la densidad de países en cada segmento, facilitando la identificación de los grupos de bajo y alto consumo.
