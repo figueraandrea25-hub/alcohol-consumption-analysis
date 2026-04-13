@@ -4,6 +4,9 @@ import plotly.express as px
 
 # Configuración de la Página de Streamlit
 
+<<<<<<< HEAD
+st.set_page_config(page_title="Dashboard de Consumo de Alcohol", layout="wide")
+=======
 st.set_page_config(
     page_title="Dashboard de Consumo de Alcohol por Regiones",
 
@@ -20,98 +23,86 @@ st.set_page_config(
 
 PALETA_PRINCIPAL = ["#1a6b3c", "#2d9e6b", "#4cc38a", "#90dbb5", "#d4f0e3"]
 COLOR_BASE = PALETA_PRINCIPAL[0]
+>>>>>>> eeb434d9f71d56825d826ec80511f45180f73885
 
 # Carga de Datos
 DATA_URL = "https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/main/alcohol_data.csv"
-ANIOS_ANALISIS = (2015, 2019)
+YEARS = (2015, 2019)
 
-# Ordenamiento de la Data por regiones 
-REGION_MAP = {
-    "América Latina y el Caribe": [
-        "ATG", "ARG", "BHS", "BRB", "BLZ", "BOL", "BRA", "CHL", "COL", "CRI", "CUB", "DMA",
-        "DOM", "ECU", "SLV", "GRD", "GTM", "GUY", "HTI", "HND", "JAM", "MEX", "NIC", "PAN",
-        "PRY", "PER", "KNA", "LCA", "VCT", "SUR", "TTO", "URY", "VEN"
-    ],
-    "América del Norte": ["CAN", "USA"],
-    "Asia": [
-        "AFG", "BHR", "BGD", "BTN", "BRN", "KHM", "CHN", "COK", "CYP", "PRK", "EGY", "FJI",
-        "IND", "IDN", "IRN", "IRQ", "ISR", "JPN", "JOR", "KAZ", "KGZ", "KIR", "KWT", "LAO",
-        "LBN", "MYS", "MDV", "MHL", "FSM", "MNG", "MMR", "NRU", "NPL", "NZL", "NIU", "OMN",
-        "PAK", "PLW", "PNG", "PHL", "QAT", "KOR", "WSM", "SAU", "SGP", "SLB", "LKA", "SYR",
-        "TJK", "THA", "TLS", "TON", "TUR", "TKM", "TUV", "ARE", "UZB", "VUT", "VNM", "YEM"
-    ],
-    "Europa": [
-        "ALB", "AND", "ARM", "AUT", "AZE", "BLR", "BEL", "BIH", "BGR", "HRV", "CZE", "DNK",
-        "EST", "FIN", "FRA", "GEO", "DEU", "GRC", "HUN", "ISL", "IRL", "ISR", "ITA", "KAZ",
-        "KGZ", "LVA", "LTU", "LUX", "MLT", "MCO", "MNE", "NLD", "MKD", "NOR", "POL", "PRT",
-        "MDA", "ROU", "RUS", "SMR", "SRB", "SVK", "SVN", "ESP", "SWE", "CHE", "TJK", "TUR",
-        "TKM", "UKR", "GBR", "UZB"
-    ],
-    "África": [
-        "DZA", "AGO", "BEN", "BWA", "BFA", "BDI", "CMR", "CPV", "CAF", "TCD", "COM", "COG",
-        "CIV", "COD", "DJI", "EGY", "GNQ", "ERI", "ETH", "GAB", "GMB", "GHA", "GIN", "GNB",
-        "KEN", "LSO", "LBR", "LBY", "MDG", "MWI", "MLI", "MRT", "MUS", "MAR", "MOZ", "NAM",
-        "NER", "NGA", "RWA", "STP", "SEN", "SYC", "SLE", "SOM", "ZAF", "SSD", "SDN", "SYR",
-        "TGO", "TUN", "UGA", "TZA", "ZMB", "ZWE"
-    ]
+# Ordenamiento de la Data por regiones y asignación de colores 
+REGIONS = {
+    "América Latina y el Caribe": ["ATG","ARG","BHS","BRB","BLZ","BOL","BRA","CHL","COL","CRI","CUB","DMA","DOM","ECU","SLV","GRD","GTM","GUY","HTI","HND","JAM","MEX","NIC","PAN","PRY","PER","KNA","LCA","VCT","SUR","TTO","URY","VEN"],
+    "América del Norte": ["CAN","USA"],
+    "Asia": ["AFG","BHR","BGD","BTN","BRN","KHM","CHN","COK","CYP","PRK","EGY","FJI","IND","IDN","IRN","IRQ","ISR","JPN","JOR","KAZ","KGZ","KIR","KWT","LAO","LBN","MYS","MDV","MHL","FSM","MNG","MMR","NRU","NPL","NZL","NIU","OMN","PAK","PLW","PNG","PHL","QAT","KOR","WSM","SAU","SGP","SLB","LKA","SYR","TJK","THA","TLS","TON","TUR","TKM","TUV","ARE","UZB","VUT","VNM","YEM"],
+    "Europa": ["ALB","AND","ARM","AUT","AZE","BLR","BEL","BIH","BGR","HRV","CZE","DNK","EST","FIN","FRA","GEO","DEU","GRC","HUN","ISL","IRL","ITA","LVA","LTU","LUX","MLT","MCO","MNE","NLD","MKD","NOR","POL","PRT","MDA","ROU","RUS","SMR","SRB","SVK","SVN","ESP","SWE","CHE","UKR","GBR"],
+    "África": ["DZA","AGO","BEN","BWA","BFA","BDI","CMR","CPV","CAF","TCD","COM","COG","CIV","COD","DJI","GNQ","ERI","ETH","GAB","GMB","GHA","GIN","GNB","KEN","LSO","LBR","LBY","MDG","MWI","MLI","MRT","MUS","MAR","MOZ","NAM","NER","NGA","RWA","STP","SEN","SYC","SLE","SOM","ZAF","SSD","SDN","TGO","TUN","UGA","TZA","ZMB","ZWE"],
 }
-
-REGION_ORDER = [
-    "América Latina y el Caribe",
-    "América del Norte",
-    "Asia",
-    "Europa",
-    "África"
-]
-
-SECCIONES = [
-    "Resumen general",
-    "Países por región",
-    "Comparación entre regiones",
-    "Comparación dentro de una región",
-    "Ranking de países",
-    "Mapa mundial",
-    "Explorador de datos"
-]
-
-# Funciones para cargar y procesar los datos
- 
-def asignar_region(iso3: str) -> str:
-    """Asigna una región según el orden definido por el usuario."""
-    if pd.isna(iso3):
-        return "Otras / Sin clasificar"
-
-    for region in REGION_ORDER:
-        if iso3 in REGION_MAP[region]:
-            return region
-    return "Otras / Sin clasificar"
+REGION_ORDER = list(REGIONS.keys()) + ["Otras/Oceanía"]
+REGION_COLORS = {
+    "América Latina y el Caribe": "#B04A45",
+    "América del Norte": "#8D5A97",
+    "Asia": "#2C7FB8",
+    "Europa": "#A61C00",
+    "África": "#516C92",
+    "Otras/Oceanía": "#7A6C74",
+}
 
 # Carga y ordenamiento de los datos
 @st.cache_data
-def cargar_y_preparar_datos(url: str) -> pd.DataFrame:
-    """Carga la base, normaliza columnas y deja lista la data para el dashboard."""
-    df = pd.read_csv(url)
-
+def load_data():
+    df = pd.read_csv(DATA_URL)
     df.columns = (
-        df.columns
-        .str.strip()
-        .str.upper()
+        df.columns.astype(str).str.strip().str.upper()
         .str.replace(" ", "_", regex=False)
+        .str.replace(r"[^A-Z0-9_]", "", regex=True)
     )
+    rename_map = {
+        "COUNTRY_NAME": "COUNTRY",
+        "TIME_PERIOD": "YEAR",
+        "OBS_VALUE": "ALCOHOL_LITERS_PER_CAPITA",
+        "ISO_3": "ISO3",
+        "ISO_CODE": "ISO3",
+    }
+    df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+    return df
 
-    columnas_numericas = [
-        "YEAR", "ALCOHOL_LITERS_PER_CAPITA", "LOWER_CI", "UPPER_CI", "CI_WIDTH"
-    ]
-    for col in columnas_numericas:
+# Asignacion de regiones con el codigo ISO3
+def assign_region(iso3):
+    iso3 = str(iso3).strip().upper()
+    for region, codes in REGIONS.items():
+        if iso3 in codes:
+            return region
+    return "Otras/Oceanía"
+
+# Limpieza de datos, filtrando años, sexo, convirtiendo columnas numericas y calculando incertidumbre 
+def prepare_data(df):
+    required = ["COUNTRY", "ISO3", "YEAR", "SEX", "ALCOHOL_LITERS_PER_CAPITA"]
+    missing = [col for col in required if col not in df.columns]
+    if missing:
+        st.error(f"Faltan columnas obligatorias: {missing}")
+        st.write("Columnas encontradas:", df.columns.tolist())
+        st.stop()
+
+    df = df.copy()
+    numeric_cols = ["YEAR", "ALCOHOL_LITERS_PER_CAPITA", "LOWER_CI", "UPPER_CI", "CI_WIDTH"]
+    for col in numeric_cols:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
 
-    if "COUNTRY" in df.columns:
-        df["COUNTRY"] = df["COUNTRY"].astype(str).str.strip()
+    df["ISO3"] = df["ISO3"].astype(str).str.strip().str.upper()
+    df["SEX"] = df["SEX"].astype(str).str.strip().str.lower()
+    df = df[(df["YEAR"].between(*YEARS)) & (df["SEX"] == "both sexes")].copy()
 
-    if "SEX" in df.columns:
-        df["SEX"] = df["SEX"].astype(str).str.strip().str.title()
+    if "CI_WIDTH" not in df.columns:
+        if "LOWER_CI" in df.columns and "UPPER_CI" in df.columns:
+            df["CI_WIDTH"] = df["UPPER_CI"] - df["LOWER_CI"]
+        else:
+            df["CI_WIDTH"] = pd.NA
 
+<<<<<<< HEAD
+    df["REGION"] = df["ISO3"].apply(assign_region)
+    return df.dropna(subset=["ALCOHOL_LITERS_PER_CAPITA"])
+=======
     if "ISO3" in df.columns:
         df["ISO3"] = df["ISO3"].astype(str).str.strip().str.upper()
 
@@ -249,3 +240,4 @@ DATA_URL = (
     "https://raw.githubusercontent.com/figueraandrea25-hub/alcohol-consumption-analysis/refs/heads/andrea-dev/dataset/alcohol_data.csv"
 )
 
+>>>>>>> eeb434d9f71d56825d826ec80511f45180f73885
