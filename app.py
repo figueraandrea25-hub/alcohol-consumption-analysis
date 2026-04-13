@@ -100,3 +100,24 @@ def region_summary(df):
     )
     summary["REGION"] = pd.Categorical(summary["REGION"], categories=REGION_ORDER, ordered=True)
     return summary.sort_values("REGION")
+
+# Formato basico para graficos, unificando colores y estilos
+def style(fig, height=430):
+    fig.update_layout(template="plotly_white", height=height, margin=dict(l=20, r=20, t=60, b=20), legend_title_text="")
+    return fig
+
+# Calculo de intervalos de confianza por macro-region
+def macro_region_ci(df):
+    ci = df.groupby("REGION", as_index=False).agg(
+        media=("ALCOHOL_LITERS_PER_CAPITA", "mean"),
+        sd=("ALCOHOL_LITERS_PER_CAPITA", "std"),
+        n=("ALCOHOL_LITERS_PER_CAPITA", "count")
+    )
+    ci["se"] = ci["sd"] / (ci["n"] ** 0.5)
+    ci["li"] = ci["media"] - 1.96 * ci["se"]
+    ci["ls"] = ci["media"] + 1.96 * ci["se"]
+    return ci.sort_values("media")
+
+# Encabezado del dashboard 
+st.title("Dashboard de Consumo de Alcohol (2015–2019)")
+st.caption("Analisis de datos critico sobre la incertidumbre como una variable fundamental para ser presentada a la sociedad.")
