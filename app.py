@@ -219,81 +219,81 @@ with tabs[3]:
 
     # Tablas y graficos de comparacion entre paises
     with tabs[4]:
-         st.subheader("Comparación entre dos países de la misma región")
-    region = st.selectbox("Región", selected_regions, key="two_region")
-    countries = sorted(df.loc[df["REGION"] == region, "COUNTRY"].unique())
-    if len(countries) >= 2:
-        c1, c2 = st.columns(2)
-        with c1:
-            country_a = st.selectbox("País A", countries, key="a")
-        with c2:
-            country_b = st.selectbox("País B", countries, index=1, key="b")
-        comp = df[df["COUNTRY"].isin([country_a, country_b])].copy()
-        yearly = comp.groupby(["COUNTRY", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
-        fig = px.line(yearly, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="COUNTRY", markers=True, title=f"Evolución temporal: {country_a} vs {country_b}")
-        st.plotly_chart(style(fig), use_container_width=True)
-        intervals = comp.groupby("COUNTRY", as_index=False).agg(Media=("ALCOHOL_LITERS_PER_CAPITA", "mean"), LI=("LOWER_CI", "mean"), LS=("UPPER_CI", "mean"))
-        st.dataframe(intervals.style.format({"Media": "{:.2f}", "LI": "{:.2f}", "LS": "{:.2f}"}), use_container_width=True)
-    else:
-        st.warning("No hay suficientes países en esa región.")
+        st.subheader("Comparación entre dos países de la misma región")
+        region = st.selectbox("Región", selected_regions, key="two_region")
+        countries = sorted(df.loc[df["REGION"] == region, "COUNTRY"].unique())
+        if len(countries) >= 2:
+            c1, c2 = st.columns(2)
+            with c1:
+                country_a = st.selectbox("País A", countries, key="a")
+            with c2:
+                country_b = st.selectbox("País B", countries, index=1, key="b")
+            comp = df[df["COUNTRY"].isin([country_a, country_b])].copy()
+            yearly = comp.groupby(["COUNTRY", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
+            fig = px.line(yearly, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="COUNTRY", markers=True, title=f"Evolución temporal: {country_a} vs {country_b}")
+            st.plotly_chart(style(fig), use_container_width=True)
+            intervals = comp.groupby("COUNTRY", as_index=False).agg(Media=("ALCOHOL_LITERS_PER_CAPITA", "mean"), LI=("LOWER_CI", "mean"), LS=("UPPER_CI", "mean"))
+            st.dataframe(intervals.style.format({"Media": "{:.2f}", "LI": "{:.2f}", "LS": "{:.2f}"}), use_container_width=True)
+        else:
+            st.warning("No hay suficientes países en esa región.")
     
     # Tabla/ Grafico de intervalos de confianza por pais
     with tabs[5]:
         st.subheader("Intervalos de confianza por país dentro de una región")
-    region = st.selectbox("Selecciona región", selected_regions, key="int_region")
-    country_int = df[df["REGION"] == region].groupby("COUNTRY", as_index=False).agg(
-        Media=("ALCOHOL_LITERS_PER_CAPITA", "mean"),
-        LI=("LOWER_CI", "mean"),
-        LS=("UPPER_CI", "mean"),
-        Incertidumbre=("CI_WIDTH", "mean")
-    ).sort_values("Media", ascending=False)
-    fig = px.scatter(country_int, x="Media", y="COUNTRY", error_x="Incertidumbre", color="Media", color_continuous_scale="RdBu_r",
-                     title=f"Consumo e incertidumbre por país - {region}")
-    st.plotly_chart(style(fig, max(420, len(country_int) * 28 + 140)), use_container_width=True)
-    st.dataframe(country_int.style.format({"Media": "{:.2f}", "LI": "{:.2f}", "LS": "{:.2f}", "Incertidumbre": "{:.2f}"}), use_container_width=True)
-
+        region = st.selectbox("Selecciona región", selected_regions, key="int_region")
+        country_int = df[df["REGION"] == region].groupby("COUNTRY", as_index=False).agg(
+            Media=("ALCOHOL_LITERS_PER_CAPITA", "mean"),
+            LI=("LOWER_CI", "mean"),
+            LS=("UPPER_CI", "mean"),
+            Incertidumbre=("CI_WIDTH", "mean")
+        ).sort_values("Media", ascending=False)
+        fig = px.scatter(country_int, x="Media", y="COUNTRY", error_x="Incertidumbre", color="Media", color_continuous_scale="RdBu_r",
+                         title=f"Consumo e incertidumbre por país - {region}")
+        st.plotly_chart(style(fig, max(420, len(country_int) * 28 + 140)), use_container_width=True)
+        st.dataframe(country_int.style.format({"Media": "{:.2f}", "LI": "{:.2f}", "LS": "{:.2f}", "Incertidumbre": "{:.2f}"}), use_container_width=True)
+    
     # Analisis de asimetría regional ( Histrograma con media y mediana para estudiar la distribucion)
     with tabs[6]:
         st.subheader("Análisis de asimetría regional")
-    chosen = [r for r in selected_regions if r in df["REGION"].unique()]
-    if chosen:
-        region_plot = st.selectbox("Región para ver distribución", chosen, key="skew_region")
-        vals = df[df["REGION"] == region_plot].copy()
-        fig = px.histogram(vals, x="ALCOHOL_LITERS_PER_CAPITA", nbins=20, title=f"Distribución del consumo - {region_plot}",
-                           color_discrete_sequence=["#B04A45"])
-        fig.add_vline(x=vals["ALCOHOL_LITERS_PER_CAPITA"].mean(), line_dash="dash", line_color="blue")
-        fig.add_vline(x=vals["ALCOHOL_LITERS_PER_CAPITA"].median(), line_color="red")
-        st.plotly_chart(style(fig), use_container_width=True)
-        st.caption("Línea azul punteada = media. Línea roja = mediana.")
-    else:
-        st.warning("No hay regiones disponibles.")
+        chosen = [r for r in selected_regions if r in df["REGION"].unique()]
+        if chosen:
+            region_plot = st.selectbox("Región para ver distribución", chosen, key="skew_region")
+            vals = df[df["REGION"] == region_plot].copy()
+            fig = px.histogram(vals, x="ALCOHOL_LITERS_PER_CAPITA", nbins=20, title=f"Distribución del consumo - {region_plot}",
+                               color_discrete_sequence=["#B04A45"])
+            fig.add_vline(x=vals["ALCOHOL_LITERS_PER_CAPITA"].mean(), line_dash="dash", line_color="blue")
+            fig.add_vline(x=vals["ALCOHOL_LITERS_PER_CAPITA"].median(), line_color="red")
+            st.plotly_chart(style(fig), use_container_width=True)
+            st.caption("Línea azul punteada = media. Línea roja = mediana.")
+        else:
+            st.warning("No hay regiones disponibles.")
     
     # Tabla y grafico sobre intervalos de confianza por macro-región
     with tabs[7]:
-         st.subheader("Consumo por macro-región con IC 95%")
-    ci = macro_region_ci(df)
-    ci["Error_95"] = ci["ls"] - ci["media"]
-    fig = px.scatter(ci, x="media", y="REGION", error_x="Error_95", color="media", color_continuous_scale="RdBu_r",
-                     text=ci["media"].round(2), title="Media regional e intervalo de confianza 95%")
-    st.plotly_chart(style(fig, 540), use_container_width=True)
-    st.dataframe(ci.style.format({"media": "{:.2f}", "sd": "{:.2f}", "se": "{:.2f}", "li": "{:.2f}", "ls": "{:.2f}"}), use_container_width=True)
-
+        st.subheader("Consumo por macro-región con IC 95%")
+        ci = macro_region_ci(df)
+        ci["Error_95"] = ci["ls"] - ci["media"]
+        fig = px.scatter(ci, x="media", y="REGION", error_x="Error_95", color="media", color_continuous_scale="RdBu_r",
+                         text=ci["media"].round(2), title="Media regional e intervalo de confianza 95%")
+        st.plotly_chart(style(fig, 540), use_container_width=True)
+        st.dataframe(ci.style.format({"media": "{:.2f}", "sd": "{:.2f}", "se": "{:.2f}", "li": "{:.2f}", "ls": "{:.2f}"}), use_container_width=True)
+    
     # Creacion ranking de paises con mayor consumo (top 10)
     with tabs[8]:
-         st.subheader("Top 10 países con mayor consumo")
-    top10 = df.groupby("COUNTRY", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean().sort_values("ALCOHOL_LITERS_PER_CAPITA", ascending=False).head(10)
-    fig = px.bar(top10, x="ALCOHOL_LITERS_PER_CAPITA", y="COUNTRY", orientation="h", color="ALCOHOL_LITERS_PER_CAPITA",
-                 color_continuous_scale="Reds", text_auto=".2f", title="Top 10 países con mayor consumo")
-    st.plotly_chart(style(fig), use_container_width=True)
-    st.dataframe(top10.style.format({"ALCOHOL_LITERS_PER_CAPITA": "{:.2f}"}), use_container_width=True)
-
+        st.subheader("Top 10 países con mayor consumo")
+        top10 = df.groupby("COUNTRY", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean().sort_values("ALCOHOL_LITERS_PER_CAPITA", ascending=False).head(10)
+        fig = px.bar(top10, x="ALCOHOL_LITERS_PER_CAPITA", y="COUNTRY", orientation="h", color="ALCOHOL_LITERS_PER_CAPITA",
+                     color_continuous_scale="Reds", text_auto=".2f", title="Top 10 países con mayor consumo")
+        st.plotly_chart(style(fig), use_container_width=True)
+        st.dataframe(top10.style.format({"ALCOHOL_LITERS_PER_CAPITA": "{:.2f}"}), use_container_width=True)
+    
     # Linea evolucion temporal del consumo por año a nivel global   
     with tabs[9]:
-         st.subheader("Consumo promedio por año")
-    years_df = df.groupby("YEAR", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
-    fig = px.line(years_df, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", markers=True, title="Promedio global por año")
-    st.plotly_chart(style(fig), use_container_width=True)
-    region_year = df.groupby(["REGION", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
-    fig2 = px.line(region_year, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="REGION", color_discrete_map=REGION_COLORS,
-                   markers=True, title="Comparación regional por año")
-    st.plotly_chart(style(fig2, 450), use_container_width=True)            
+        st.subheader("Consumo promedio por año")
+        years_df = df.groupby("YEAR", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
+        fig = px.line(years_df, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", markers=True, title="Promedio global por año")
+        st.plotly_chart(style(fig), use_container_width=True)
+        region_year = df.groupby(["REGION", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
+        fig2 = px.line(region_year, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="REGION", color_discrete_map=REGION_COLORS,
+                       markers=True, title="Comparación regional por año")
+        st.plotly_chart(style(fig2, 450), use_container_width=True)
