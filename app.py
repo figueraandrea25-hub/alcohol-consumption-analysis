@@ -30,7 +30,7 @@ REGION_COLORS = {
 
 # Carga y ordenamiento de los datos
 @st.cache_data
-def load_data():
+def cargar_datos():
     df = pd.read_csv(DATA_URL)
     df.columns = (
         df.columns.astype(str).str.strip().str.upper()
@@ -48,7 +48,7 @@ def load_data():
     return df
 
 # Asignacion de regiones con el codigo ISO3
-def assign_region(iso3):
+def asignar_region(iso3):
     iso3 = str(iso3).strip().upper()
     for region, codes in REGIONS.items():
         if iso3 in codes:
@@ -56,7 +56,7 @@ def assign_region(iso3):
     return "Otras/Oceanía"
 
 # Limpieza de datos, filtrando años, sexo, convirtiendo columnas numericas y calculando incertidumbre 
-def prepare_data(df):
+def limpiar_datos(df):
     required = ["COUNTRY", "ISO3", "YEAR", "SEX", "ALCOHOL_LITERS_PER_CAPITA"]
     missing = [col for col in required if col not in df.columns]
     if missing:
@@ -79,18 +79,18 @@ def prepare_data(df):
             df["CI_WIDTH"] = df["UPPER_CI"] - df["LOWER_CI"]
         else:
             df["CI_WIDTH"] = pd.NA
-    df["REGION"] = df["ISO3"].apply(assign_region)
+    df["REGION"] = df["ISO3"].apply(asignar_region)
     return df.dropna(subset=["ALCOHOL_LITERS_PER_CAPITA"])
 
 # Grafica de data sucia vs limpia ( Simulando valores faltantes para comparar el efecto de la limpieza )
-def make_dirty_versions(df):
+def crear_versiones_sucias(df):
     dirty = df.copy()
     dirty.loc[dirty.sample(frac=0.10, random_state=123).index, "ALCOHOL_LITERS_PER_CAPITA"] = pd.NA
     recovered = dirty.dropna(subset=["ALCOHOL_LITERS_PER_CAPITA"]).copy()
     return dirty, recovered
 
 # Resumen de datos por región y año, calculando el promedio y la incertidumbre media
-def region_summary(df):
+def resumen_regiones(df):
     summary = df.groupby("REGION", as_index=False).agg(
         Promedio=("ALCOHOL_LITERS_PER_CAPITA", "mean"),
         Mediana=("ALCOHOL_LITERS_PER_CAPITA", "median"),
@@ -125,14 +125,14 @@ st.caption("Analisis de datos critico sobre la incertidumbre como una variable f
 # Carga final de la base para analizar
 
 try:
-    df = prepare_data(load_data())
+    df = limpiar_datos(cargar_datos())
 except Exception as e:
     st.error("No fue posible cargar la base de datos.")
     st.error(f"Detalle: {e}")
     st.stop()
 
 # Versión sucia vs limpia para mostrar el impacto de la limpieza de datos
-dirty, recovered = make_dirty_versions(df)
+dirty, recovered = crear_versiones_sucias(df)
 
 # Filtros generales para el dashboard
 st.sidebar.header("Filtros")
@@ -164,7 +164,7 @@ tabs = st.tabs([
 # Pestaña resumen general con tabla y grafico 
 with tabs[0]:
     st.subheader("Panorama general")
-    rs = region_summary(df)
+    rs = resumen_regiones(df)
     fig = px.bar(rs, x="REGION", y="Promedio", color="REGION", color_discrete_map=REGION_COLORS, text_auto=".2f", title="Promedio de consumo por región")
     fig.update_layout(showlegend=False)
     st.plotly_chart(style(fig), use_container_width=True)
@@ -187,7 +187,7 @@ with tabs[1]:
 # Analisis de media y mediana con el fin de evaluar la robustez del estimador centra por region 
 with tabs[2]:
     st.subheader("Contraste entre media y mediana")
-    med = region_summary(df)[["REGION", "Promedio", "Mediana"]].copy()
+    med = resumen_regiones(df)[["REGION", "Promedio", "Mediana"]].copy()
     med["Sesgo_%"] = ((med["Promedio"] - med["Mediana"]) / med["Mediana"]) * 100
     fig = px.bar(med.melt(id_vars="REGION", value_vars=["Promedio", "Mediana"], var_name="Medida", value_name="Valor"),
                  x="REGION", y="Valor", color="Medida", barmode="group", title="Promedio vs mediana por región")
@@ -197,7 +197,7 @@ with tabs[2]:
 # Graficos de promedio, mediana, desviacion estandar e incertidumbre ( Estadisticas regionales)
 with tabs[3]:
     st.subheader("Estadísticas por región")
-    rs = region_summary(df)
+    rs = resumen_regiones(df)
     c1, c2 = st.columns(2)
     c3, c4 = st.columns(2)
     with c1:
@@ -286,3 +286,14 @@ with tabs[3]:
                  color_continuous_scale="Reds", text_auto=".2f", title="Top 10 países con mayor consumo")
     st.plotly_chart(style(fig), use_container_width=True)
     st.dataframe(top10.style.format({"ALCOHOL_LITERS_PER_CAPITA": "{:.2f}"}), use_container_width=True)
+
+    # Linea evolucion temporal del consumo por año a nivel global   
+    with tabs[9]:
+         st.subheader("Consumo promedio por año")
+    years_df = df.groupby("YEAR", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
+    fig = px.line(years_df, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", markers=True, title="Promedio global por año")
+    st.plotly_chart(style(fig), use_container_width=True)
+    region_year = df.groupby(["REGION", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
+    fig2 = px.line(region_year, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="REGION", color_discrete_map=REGION_COLORS,
+                   markers=True, title="Comparación regional por año")
+    st.plotly_chart(style(fig2, 450), use_container_width=True)            
