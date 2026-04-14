@@ -277,3 +277,12 @@ with tabs[3]:
                      text=ci["media"].round(2), title="Media regional e intervalo de confianza 95%")
     st.plotly_chart(style(fig, 540), use_container_width=True)
     st.dataframe(ci.style.format({"media": "{:.2f}", "sd": "{:.2f}", "se": "{:.2f}", "li": "{:.2f}", "ls": "{:.2f}"}), use_container_width=True)
+
+    # Creacion ranking de paises con mayor consumo (top 10)
+    with tabs[8]:
+         st.subheader("Top 10 países con mayor consumo")
+    top10 = df.groupby("COUNTRY", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean().sort_values("ALCOHOL_LITERS_PER_CAPITA", ascending=False).head(10)
+    fig = px.bar(top10, x="ALCOHOL_LITERS_PER_CAPITA", y="COUNTRY", orientation="h", color="ALCOHOL_LITERS_PER_CAPITA",
+                 color_continuous_scale="Reds", text_auto=".2f", title="Top 10 países con mayor consumo")
+    st.plotly_chart(style(fig), use_container_width=True)
+    st.dataframe(top10.style.format({"ALCOHOL_LITERS_PER_CAPITA": "{:.2f}"}), use_container_width=True)
