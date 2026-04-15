@@ -292,8 +292,10 @@ with tabs[3]:
         st.subheader("Consumo promedio por año")
         years_df = df.groupby("YEAR", as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
         fig = px.line(years_df, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", markers=True, title="Promedio global por año")
+        fig.update_xaxes(dtick=1, tickformat="d")
         st.plotly_chart(style(fig), use_container_width=True)
         region_year = df.groupby(["REGION", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
         fig2 = px.line(region_year, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="REGION", color_discrete_map=REGION_COLORS,
                        markers=True, title="Comparación regional por año")
+        fig2.update_xaxes(dtick=1, tickformat="d"
         st.plotly_chart(style(fig2, 450), use_container_width=True)
