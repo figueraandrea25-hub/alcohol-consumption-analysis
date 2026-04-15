@@ -297,5 +297,5 @@ with tabs[3]:
         region_year = df.groupby(["REGION", "YEAR"], as_index=False)["ALCOHOL_LITERS_PER_CAPITA"].mean()
         fig2 = px.line(region_year, x="YEAR", y="ALCOHOL_LITERS_PER_CAPITA", color="REGION", color_discrete_map=REGION_COLORS,
                        markers=True, title="Comparación regional por año")
-        fig2.update_xaxes(dtick=1, tickformat="d"
+        fig2.update_xaxes(dtick=1, tickformat="d")
         st.plotly_chart(style(fig2, 450), use_container_width=True)
